@@ -1,0 +1,433 @@
+h1, h2, h3, h4, h5, h6 {
+    color: #74797f;
+}
+
+p {
+    color: #8b8f94;
+    line-height: 1.5;
+    font-size: 19px;
+    font-weight: 200;
+}
+
+iframe {
+    border: none !important;
+}
+
+.form-control::-webkit-input-placeholder {
+    color: #b5b5b5;
+    opacity: 1;
+}
+
+/* webkit */
+
+.form-control::-moz-placeholder {
+    color: #b5b5b5;
+    opacity: 1;
+}
+
+/* Firefox 19+ */
+
+.form-control:-moz-placeholder {
+    color: #b5b5b5;
+    opacity: 1;
+}
+
+/* Firefox 18- */
+
+.form-control:-ms-input-placeholder {
+    color: #b5b5b5;
+    opacity: 1;
+}
+
+/* IE */
+
+.bg-left {
+    background-color: #e6e8eb;
+}
+
+.bg-right {
+    background-color: white;
+}
+
+.banner .inner {
+    position: relative;
+}
+
+.banner .content {
+    position: relative;
+    display: inline-block;
+    padding: 1.85em 0.5em 3.25em 0.5em;
+    background: white;
+    border-radius: 0.75em;
+    z-index: 1;
+}
+
+.banner .content:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0.75em;
+    left: 50%;
+    width: 2.5em;
+    height: 0.4em;
+    margin-left: -1.25em;
+    border-radius: 1em;
+    background: transparent;
+    box-shadow: inset 0 0 0 2px #e6e8eb;
+}
+
+.banner .content:after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0.7em;
+    left: 50%;
+    width: 1.85em;
+    height: 1.85em;
+    margin-left: -1em;
+    border-radius: 100%;
+    background: transparent;
+    box-shadow: inset 0 0 0 2px #e6e8eb;
+}
+
+.banner ul {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    white-space: nowrap;
+    width: 14em;
+    height: 25em;
+}
+
+.banner ul li.top {
+    z-index: 2;
+}
+
+.banner ul li.visible {
+    opacity: 1;
+}
+
+.banner ul li {
+    -moz-transition: opacity 1.25s ease-in-out;
+    -webkit-transition: opacity 1.25s ease-in-out;
+    -ms-transition: opacity 1.25s ease-in-out;
+    transition: opacity 1.25s ease-in-out;
+    display: block;
+    left: 0;
+    list-style: none;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    opacity: 0;
+}
+
+.banner ul li img {
+    display: block;
+    width: 14em;
+    height: 25em;
+}
+
+.banerPk {
+    float: left;
+    right: auto;
+    left: 6%;
+    top: 15%;
+}
+
+.bg-qw {
+    height: 200px;
+    background-color: black;
+    transition: .2s;
+}
+
+.bg-qw:hover {
+    background-color: aqua;
+    transition: .2s;
+    zoom: 1.2;
+}
+
+.display-6 {
+    font-size: 2.2rem;
+    font-weight: 300;
+    line-height: 1.2;
+    color: #74797f;
+}
+
+.stepWidget {
+    color: #74797f;
+    font-weight: 500;
+}
+
+.stepWidget span {
+    color: #007bff;
+}
+
+.stepWidget input {
+    margin-top: 10px;
+}
+
+.step4image img {
+    width: 5vw;
+}
+.step4imageActive img {
+    filter: opacity(0.8);
+    padding: 7px;
+    transition: 0.8s;
+}
+
+
+.transition05 {
+    opacity: 0;
+    /*Элемент полностью прозрачный (невидимый)*/
+    transition: 1s;
+    /*Скорость перехода состояния элемента*/
+    animation: show 1.5s 1;
+    /* Указываем название анимации, её время и количество повторов*/
+    animation-fill-mode: forwards;
+    /* Чтобы элемент оставался в конечном состоянии анимации */
+    animation-delay: 0s;
+    /* Задержка перед началом */
+}
+
+@keyframes show {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+textarea.form-control#readyСodeCopy {
+    resize: none;
+}
+
+.step2imgInst {
+    width: 180px;
+    height: 390px;
+    margin: 10px;
+}
+
+#step2img img {
+    width: 100%;
+    height: 40vh;
+    object-fit: cover;
+}
+
+.step2imgRefresh {
+    padding-top: 13vh !important;
+    font-size: 100px;
+    color: #007bff;
+    z-index: 3;
+    text-align: center;
+}
+
+.step2imgSelect {
+    border: 6px solid #007bff;
+    opacity: 0.5;
+    filter: alpha(opacity=60);
+    transition: 0.5s;
+}
+
+.step2imgRefresh a {
+    text-decoration: none;
+}
+
+#chekUrlID {
+    float: right;
+}
+
+.loader {
+    border: 10px solid #e6e8eb;
+    border-top: 10px solid #1787ff;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 1.7s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23007bff' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E") !important;
+}
+
+.carousel-control-next-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23007bff' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
+}
+
+.carousel-control-next, .carousel-control-prev {
+    top: 207px;
+    align-items: flex-start;
+}
+
+/* Form Style */
+
+.form-LogInForm {
+    background: #fff;
+    padding-bottom: 40px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.form-LogInForm .heading {
+    display: block;
+    font-size: 35px;
+    font-weight: 700;
+    padding: 0 0 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 30px;
+}
+
+.form-LogInForm .form-group {
+    padding: 0 40px;
+    margin: 0 0 25px 0;
+    position: relative;
+}
+
+.form-LogInForm .form-control {
+    background: #f0f0f0;
+    border: none;
+    border-radius: 20px;
+    box-shadow: none;
+    padding: 0 20px 0 45px;
+    height: 40px;
+    transition: all 0.3s ease 0s;
+}
+
+.form-LogInForm .form-control:focus {
+    background: #e0e0e0;
+    box-shadow: none;
+    outline: 0 none;
+}
+
+.form-LogInForm .form-group i {
+    position: absolute;
+    top: 12px;
+    left: 60px;
+    font-size: 17px;
+    color: #c8c8c8;
+    transition: all 0.5s ease 0s;
+}
+
+.form-LogInForm .form-control:focus+i {
+    color: #00b4ef;
+}
+
+.form-LogInForm .fa-question-circle {
+    display: inline-block;
+    position: absolute;
+    top: 12px;
+    right: 60px;
+    font-size: 20px;
+    color: #808080;
+    transition: all 0.5s ease 0s;
+}
+
+.form-LogInForm .fa-question-circle:hover {
+    color: #000;
+}
+
+.form-LogInForm .main-checkbox {
+    float: left;
+    width: 20px;
+    height: 20px;
+    background: #11a3fc;
+    border-radius: 50%;
+    position: relative;
+    margin: 5px 0 0 5px;
+    border: 1px solid #11a3fc;
+}
+
+.form-LogInForm .main-checkbox label {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+.form-LogInForm .main-checkbox label:after {
+    content: "";
+    width: 10px;
+    height: 5px;
+    position: absolute;
+    top: 5px;
+    left: 4px;
+    border: 3px solid #fff;
+    border-top: none;
+    border-right: none;
+    background: transparent;
+    opacity: 0;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.form-LogInForm .main-checkbox input[type=checkbox] {
+    visibility: hidden;
+}
+
+.form-LogInForm .main-checkbox input[type=checkbox]:checked+label:after {
+    opacity: 1;
+}
+
+.form-LogInForm .text {
+    float: left;
+    margin-left: 7px;
+    line-height: 20px;
+    padding-top: 5px;
+    text-transform: capitalize;
+}
+
+.form-LogInForm .btn {
+    float: right;
+    font-size: 14px;
+    color: #fff;
+    background: #00b4ef;
+    border-radius: 30px;
+    padding: 10px 25px;
+    border: none;
+    text-transform: capitalize;
+    transition: all 0.5s ease 0s;
+}
+
+.code-group .btn-copy-code {
+    position: absolute;
+    bottom: 15px;
+    right: 30px;
+    height: 30px;
+}
+
+.code-group .code-copy {
+    padding-bottom: 50px;
+    padding-right: 70px;
+}
+
+#widgetDemoUrl {
+    font-size: 1.5em;
+}
+
+.title2 {
+    font-size: 26px;
+}
+
+@media only screen and (max-width: 479px) {
+    .form-LogInForm .form-group {
+        padding: 0 25px;
+    }
+    .form-LogInForm .form-group i {
+        left: 45px;
+    }
+    .form-LogInForm .btn {
+        padding: 10px 20px;
+    }
+}

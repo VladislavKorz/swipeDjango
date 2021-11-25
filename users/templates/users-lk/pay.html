@@ -1,0 +1,152 @@
+{%extends 'users-lk/base_user.html' %}
+{% load static %}
+{% block body %}
+<script src="https://securepay.tinkoff.ru/html/payForm/js/tinkoff_v2.js"></script>
+<div class="container">
+    <div class="row m-t-30">
+        <div class="col-xl-3 col-md-6">
+            <div class="card pricing-box mt-4">
+                <div class="pricing-icon">
+                    <i class="ti-shield bg-success"></i>
+                </div>
+                <div class="pricing-content">
+                    <div class="text-center">
+                        <h5 class="text-uppercase mt-5">Тестовый</h5>
+                        <div class="pricing-plan mt-4 pt-2">
+                            <h1><sup>₽ </sup>0 <small class="font-16">/ 7 дней</small></h1>
+                        </div>
+                        <div class="pricing-border mt-5"></div>
+                    </div>
+                    <div class="pricing-features mt-4">
+                        <p class="font-14 mb-2"><i class="ti-check-box text-success mr-3"></i> Все функции</p>
+                    </div>
+                    <div class="pricing-border mt-4"></div>
+                    <div class="mt-4 pt-3 text-center">
+                        <a href="" class="btn btn-success btn-lg w-100 btn-round">Уже подключен</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card pricing-box mt-4">
+                <div class="pricing-icon">
+                    <i class="ti-shield bg-primary"></i>
+                </div>
+                <div class="pricing-content">
+                    <div class="text-center">
+                        <h5 class="text-uppercase mt-5">Базовый</h5>
+                        <div class="pricing-plan mt-4 pt-2">
+                            <h1><sup>₽ </sup>500 <small class="font-16">/ Месяц</small></h1>
+                        </div>
+                        <div class="pricing-border mt-5"></div>
+                    </div>
+                    <div class="pricing-features mt-4">
+                        <p class="font-14 mb-2"><i class="ti-check-box text-primary mr-3"></i> До 3х виджетов</p>
+                        <p class="font-14 mb-2"><i class="ti-check-box text-primary mr-3"></i> 1350 ₽ за 3 месяца</p>
+                        <p class="font-14 mb-2"><i class="ti-check-box text-primary mr-3"></i> 2400 ₽ за 6 месяцев</p>
+                        <p class="font-14 mb-2"><i class="ti-check-box text-primary mr-3"></i> 4200 ₽ за год</p>
+                    </div>
+                    <div class="pricing-border mt-4"></div>
+                    <div class="mt-4 pt-3 text-center">
+                        <a href="" class="btn btn-primary btn-lg w-100 btn-round" data-toggle="modal"
+                            data-target="#payModal" data-whatever="500">Подключить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card pricing-box mt-4">
+                <div class="pricing-icon">
+                    <i class="ti-shield bg-primary"></i>
+                </div>
+                <div class="pricing-content">
+                    <div class="text-center">
+                        <h5 class="text-uppercase mt-5">Расширенный</h5>
+                        <div class="pricing-plan mt-4 pt-2">
+                            <h1><sup>₽ </sup>1500 <small class="font-16">/ Месяц</small></h1>
+                        </div>
+                        <div class="pricing-border mt-5"></div>
+                    </div>
+                    <div class="pricing-features mt-4">
+                        <p class="font-14 mb-2"><i class="ti-check-box text-primary mr-3"></i> Неограниченно виджетов
+                        </p>
+                        <p class="font-14 mb-2"><i class="ti-check-box text-primary mr-3"></i> 4050 ₽ за 3 месяца</p>
+                        <p class="font-14 mb-2"><i class="ti-check-box text-primary mr-3"></i> 7200 ₽ за 6 месяцев</p>
+                        <p class="font-14 mb-2"><i class="ti-check-box text-primary mr-3"></i> 12600 ₽ за год</p>
+                    </div>
+                    <div class="pricing-border mt-4"></div>
+                    <div class="mt-4 pt-3 text-center">
+                        <a href="#" class="btn btn-primary btn-lg w-100 btn-round" data-toggle="modal"
+                            data-target="#payModal" data-whatever="1500">Подключить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<!-- Модальное окно -->
+<div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="mt-0 modal-title header-title" id="payModalLabel">Введите данные для пополнения счета</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="pricing-features mt-4">
+                    <form name="TinkoffPayForm" onsubmit="pay(this); return false;">
+                        <input class="tinkoffPayRow" type="hidden" name="terminalkey" value="1617461788863">
+                        <input class="tinkoffPayRow" type="hidden" name="frame" value="true">
+                        <input class="tinkoffPayRow" type="hidden" name="language" value="ru">
+                        <input class="tinkoffPayRow" type="hidden" name="reccurentPayment" value="false">
+                        <input class="tinkoffPayRow" type="hidden" name="customerKey" value="">
+                        <div class="form-group row">
+                            <label for="example-time-input" class="col-sm-4 col-form-label">Email</label>
+                            <div class="col-sm-8">
+                                <input type="email" name="email" class="form-control form-control-success"
+                                    id="inputHorizontalSuccess" value="{{ request.user.email}}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-time-input" class="col-sm-4 col-form-label">Сумма заказа</label>
+                            <div class="col-sm-8">
+                                <input type="number" name="amount" required class="form-control form-control-success"
+                                    id="inputHorizontalSuccess" id="recipient-name">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-time-input" class="col-sm-4 col-form-label">ФИО плательщика</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="name" class="form-control form-control-success"
+                                    id="inputHorizontalSuccess"
+                                    value="{{ request.user.surname}} {{ request.user.name}}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-time-input" class="col-sm-4 col-form-label">Контактный
+                                телефон</label>
+                            <div class="col-sm-8">
+                                <input type="phone" name="phone" class="form-control form-control-success"
+                                    id="inputHorizontalSuccess" value="{{ request.user.phone }}">
+                            </div>
+                        </div>
+                        <input class=" tinkoffPayRow btn btn-success waves-effect waves-light" type="submit"
+                            value="Оплатить"></input>
+                        <p class="sub-title">Деньги зачисляются на счет в течении суток</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

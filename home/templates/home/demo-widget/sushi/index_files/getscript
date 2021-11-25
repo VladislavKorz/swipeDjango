@@ -1,0 +1,1473 @@
+
+(function () {
+
+	if (typeof LeadCore !== 'undefined') {
+		return;
+	}
+
+	LeadWidgets = {
+		list : {}
+	};
+
+	LeadCoreExt = {
+        isOS: function() {
+			return navigator.userAgent.match(/ipad|ipod|iphone/i);
+		},
+		buildWidgetScript: function(script) {
+			var newScript  = document.createElement("script");
+			newScript.type = "text/javascript";
+			newScript.textContent = script;
+			document.getElementsByTagName("body")[0].appendChild(newScript);
+		},
+		getWidgetScript: function(url) {
+			return new Promise(function(resolve, reject) {
+
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", url, true);
+                
+				xhr.onload = function() {
+					if (this.status == 200 && this.response) {
+						resolve(this.response);
+					} else {
+						var error = new Error(this.statusText);
+						error.code = this.status;
+						reject(error);
+					}
+				};
+
+				xhr.onerror = function() {
+					reject(new Error("Network Error"));
+				};
+
+				xhr.send();
+			});
+		},
+		parseWidgetScript: function(response) {
+			var onScript = response;
+			onScript = onScript.replace(/<script[^>]*>/gi, '');
+    		onScript = onScript.replace(/<\/script>/gi, '');
+    		//onScript = onScript.replace(/ /g, ''); 
+    		return onScript;
+		},
+		parseFieldsForWidgetScript: function(script, data) {
+			var targetScript = script;
+    		if (data.email) {
+    			targetScript = targetScript.replace(/{__email__}/g, data.email);
+    		}
+    		if (data.firstName) {
+    			targetScript = targetScript.replace(/{__name__}/g, data.firstName);
+    		}
+    		if (data.phone) {
+    			targetScript = targetScript.replace(/{__phone__}/g, data.phone);
+    		}
+    		if (data.comment) {
+    			targetScript = targetScript.replace(/{__message__}/g, data.comment);
+    		}
+    		return targetScript;
+		},
+        getPromise: function(url) {
+			return new Promise(function(resolve, reject) {
+
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+
+				xhr.onload = function() {
+					if (this.status == 200 && this.response) {
+						resolve(this.response);
+					} else {
+						var error = new Error(this.statusText);
+						error.code = this.status;
+						reject(error);
+					}
+				};
+
+				xhr.onerror = function() {
+					reject(new Error("Network Error"));
+				};
+
+				xhr.send();
+			});
+
+		},
+		setCouponBtnHandler: function(btn, couponValue, lgwgClickEvent, couponCopyAction) {
+            btn.addEventListener(lgwgClickEvent, function(event) {
+                var _this = this;
+                event.stopPropagation();
+
+                if (!couponValue) return;
+                LeadCoreExt.LGWGCopyToClipboard(couponValue, function() {
+                    _this.classList.add("element-coupon-copied");
+                    setTimeout(function() {
+                        _this.classList.remove("element-coupon-copied");
+                    }, 3000);
+                    if (couponCopyAction.isCouponCopyAction && couponCopyAction.metrikaId) {
+                    	if (!LeadCore.getCookie('LGWGCouponCopyActionLock'+couponCopyAction.metrikaId).length) {
+                    		LeadCore.setCookie('LGWGCouponCopyActionLock'+couponCopyAction.metrikaId, LeadCore.siteId, 0.007);
+	                    	LeadCore.pushTargetAction(1, couponCopyAction.metrikaId);
+	                    	if (couponCopyAction.onTargetScript) {
+	                    		LeadCoreExt.buildWidgetScript(couponCopyAction.onTargetScript);
+	                    	}
+	                    	LeadCore.sendAnalyticGlobal(couponCopyAction.metrikaId);
+                    	}
+                    }
+                });
+            });
+		},
+        getCoupon: function(dParams, btn, couponEl, lgwgClickEvent, couponCopyAction) {
+            var EMPTY_COUPON = "&nbsp;";
+            var couponElLoader = btn.querySelector(".element-coupon-loader");
+			var targetUrl = dParams.base + "/api/gate/sites/" + dParams.siteId + "/visits/" + dParams.visitId + "/coupons/" + dParams.couponCode;
+
+            couponEl.innerHTML = EMPTY_COUPON;
+
+			LeadCoreExt.getPromise(targetUrl).then(function(response) {
+				var result = JSON.parse(response).data;
+				if (result) {
+                    couponEl.innerHTML = result.value;
+                    btn.classList.remove("non-coupon-value");
+                    couponElLoader.classList.add("lgwg-none");
+
+                    LeadCoreExt.setCouponBtnHandler(btn, result.value, lgwgClickEvent, couponCopyAction);
+				} else {
+                    couponEl.innerHTML = EMPTY_COUPON;
+                    couponElLoader.classList.add("lgwg-none");
+				}
+			}, function(error) {
+                couponEl.innerHTML = EMPTY_COUPON;
+                couponElLoader.classList.add("lgwg-none");
+			});
+		},
+        LGWGCopyToClipboard: function(str, callback) {
+            var el = document.createElement("textarea");
+            el.value = str;
+            el.setAttribute("readonly", "");
+            el.style.position = "absolute";
+            el.style.left = "-9999px";
+            document.body.appendChild(el);
+
+            var selected;
+            // handle iOS as a special case
+            if (LeadCoreExt.isOS()) {
+                // save current contentEditable/readOnly status
+                var editable = el.contentEditable;
+                var readOnly = el.readOnly;
+
+                // convert to editable with readonly to stop iOS keyboard opening
+                el.contentEditable = true;
+                el.readOnly = true;
+
+                // create a selectable range
+                var range = document.createRange();
+                range.selectNodeContents(el);
+
+                // select the range
+                var selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                el.setSelectionRange(0, 999999);
+
+                // restore contentEditable/readOnly to original state
+                el.contentEditable = editable;
+                el.readOnly = readOnly;
+            } else {
+                selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+                el.select();
+            }
+
+            document.execCommand("copy");
+            document.body.removeChild(el);
+
+            if (selected) {
+                document.getSelection().removeAllRanges();
+                document.getSelection().addRange(selected);
+            }
+            callback();
+		},
+        initCouponClickOperation: function(LGWGCouponWrappers, lgwgClickEvent, dParam, couponCopyAction) {
+            for (var i = 0; i < LGWGCouponWrappers.length; i++) {
+                var btn = LGWGCouponWrappers[i];
+
+                var couponEl = btn.querySelector(".element-coupon-name");
+				if (!dParam) return;
+                dParam["couponCode"] = couponEl.getAttribute("data-ccode");
+
+                if (!couponCopyAction.isCouponCopyAction && couponCopyAction.couponElements && couponCopyAction.couponElements.length) {
+                	var couponModel = couponCopyAction.couponElements.filter(function(el) {
+			        	return el.counter == couponEl.getAttribute("data-ccounter");
+			        });
+			        couponCopyAction.isCouponCopyAction = couponModel[0].isCopyAction;
+                }
+
+                LeadCoreExt.getCoupon(dParam, btn, couponEl, lgwgClickEvent, couponCopyAction);
+            }
+		},
+        initFormCouponClickOperation: function(LGWGCouponWrappers, lgwgClickEvent, couponValue, couponCopyAction) {
+            var EMPTY_COUPON = "&nbsp;";
+            for (var i = 0; i < LGWGCouponWrappers.length; i++) {
+                var btn = LGWGCouponWrappers[i];
+
+                var couponEl = btn.querySelector(".element-coupon-name");
+                couponEl.innerHTML = couponValue;
+                var couponElLoader = btn.querySelector(".element-coupon-loader");
+                couponElLoader.classList.add("lgwg-none");
+
+                if (couponValue !== EMPTY_COUPON) {
+                    btn.classList.remove("non-coupon-value");
+                    LeadCoreExt.setCouponBtnHandler(btn, couponValue, lgwgClickEvent, couponCopyAction);
+                }
+            }
+        },
+        isItSocialCallbackCoupon: function(_) {
+            return _.couponCallback && _.couponCallback.enable;
+		},
+        isItExitCallbackCoupon: function(_) {
+            return _.couponCallback && _.couponCallback.enable;
+        },
+        isItFormCallbackCoupon: function(_) {
+            return _.enable && _.couponCallback && _.couponCallback.enable;
+        },
+        openCouponCallback: function(widgetId, couponModel, type, couponValue, metrikaId, onTargetScript) {
+            if (couponModel.couponCallback && couponModel.couponCallback.enable) {
+                var iframeCC = document.getElementById(widgetId + "__iframe__" + type);
+                iframeCC.contentWindow.showCC(widgetId, couponModel, couponValue, metrikaId, onTargetScript);
+
+                var divElementCC = document.getElementById(widgetId + "__div__" + type);
+                divElementCC.classList.remove("wv-cc-none-start-pop");
+			}
+        },
+        startCouponCallbackInit: function(widgetSettings, widgetId, type) {
+            if ((type === "exit" && LeadCoreExt.isItExitCallbackCoupon(widgetSettings.exit)) ||
+                (type === "form" && LeadCoreExt.isItFormCallbackCoupon(widgetSettings.form)) ||
+                (type === "social" && LeadCoreExt.isItSocialCallbackCoupon(widgetSettings.social))) {
+                LeadCoreExt.openCouponCallback(widgetId, type);
+			}
+		},
+		isCouponAndPossibleToCloseWidget: function(widgetElementSettings) {
+			return (typeof widgetElementSettings.couponCallback !== "undefined") && 
+				   (typeof widgetElementSettings.couponCallback.coupon !== "undefined") &&
+				   widgetElementSettings.couponCallback.coupon.closeAfter;
+		},
+		isCouponAndPossibleToCopyAction: function(widgetElementSettings) {
+			return (typeof widgetElementSettings.couponCallback !== "undefined") && 
+				   (typeof widgetElementSettings.couponCallback.coupon !== "undefined") &&
+				   widgetElementSettings.couponCallback.coupon.isCopyAction;
+		}
+	};
+
+	LeadCoreDEV = {
+		scriptTagUrl: {
+			dev: "localhost:9999/getscript",
+			labs: "labs.leadgenic.ru/getscript",
+			production: "gate.leadgenic.ru/getscript",
+		},
+		baseUrl: {
+			dev: "http://localhost:9999",
+			labs: "https://labs.leadgenic.ru",
+			production: "https://gate.leadgenic.ru"
+		},
+		currentMode: "production" 
+	};
+
+	getLGSiteIdFromScript = function() {
+	  var scripts = document.getElementsByTagName("script");
+
+	  for (var i=0; i<scripts.length; i++) {
+	  	var matchUrl = LeadCoreDEV.scriptTagUrl[LeadCoreDEV.currentMode];
+	  	if (LeadCoreDEV.currentMode === "production") {
+	  		var matchUrl2 = "gate.leadgenic.com/getscript";
+	  	}
+	    if ((scripts[i].src.indexOf("/" + matchUrl) > -1) || (matchUrl2 && scripts[i].src.indexOf("/" + matchUrl2) > -1)) {
+	      var pa = scripts[i].src.split("?").pop().split("&");
+
+	      var p = {};
+	      for(var j=0; j<pa.length; j++) {
+	        var kv = pa[j].split("=");
+	        p[kv[0]] = kv[1];
+	      }
+	      console.log(p);
+	      return p.site || null;
+	    }
+	  }
+	  // No scripts match
+	  return {};
+	};
+
+	LeadCore = {
+	    getUserTime: function() {
+	        var udate = new Date();
+	        return udate.getHours() * 3600000 + udate.getMinutes() * 60000 + udate.getSeconds() * 1000;
+	    },
+		constants: {
+            lgLinkStatic: "Хотите такой же виджет на свой сайт?",
+			lgLink: "Хотите такой же виджет на свой сайт?",
+			workOn: "Работает на ",
+			workOnLg: "Работает на LeadGenic",
+			lgLink60: "LeadGenic",
+			fromStoS: "От края до края",
+			onCenter: "По центру",
+			fromRight: "Справа",
+			fromLeft: "Слева",
+			fromBottom: "Снизу",
+			fromTop: "Сверху",
+			ownValue: "Собственная",
+			auto: "Авто",
+			horizontal: "Горизонтальная",
+			vertical: "Вертикальная",
+			fromBottomBorder: "От нижней границы",
+			onCenterWidget: "По центру виджета",
+			underContent: "Под контентом",
+			toAllWidth: "На всю ширину",
+			leftBottomCorner: "Левый нижний угол",
+			rightBottomCorner: "Правый нижний угол",
+			leftBrowserSide: "Левая сторона браузера",
+			rightBrowserSide: "Правая сторона браузера",
+			topLeftCorner: "Верхний левый угол",
+			topCenterCorner: "Сверху по центру",
+			topRightCorner: "Верхний правый угол",
+			centerLeftCorner: "Слева по центру",
+			centerCenterCorner: "По центру окна браузера",
+			centerRightCorner: "Справа по центру",
+			bottomLeftCorner: "Нижний левый угол",
+			bottomCenterCorner: "Снизу по центру",
+			bottomRightCorner: "Нижний правый угол",
+			orderFromSite: "Заявка с сайта",
+			findForYouThisSite: "Нашел для тебя этот сайт",
+			lookAt: "Посмотри:",
+			alignOnCenter: "По центру",
+			alignOnTop: "По верхнему краю",
+			alignOnBottom: "По нижнему краю",
+			alignToAllSize: "Растянуть по ширине и высоте блока",
+			alignToUserSize: "Установить произвольные габариты",
+			fullWidgetArea: "Вся площадь виджета",
+            onlyContentWidgetArea: "Только над контентом",
+            onlyContentWidgetAreaUnder: "Только под контентом",
+			autoinviteAND: "при соблюдении ВСЕХ активированных правил",
+			autoinviteOR: "при соблюдении ЛЮБОГО ИЗ активированных правил"
+		},
+		isMobile: {
+			Android: function() {
+				return navigator.userAgent.match(/Android/i);
+			},
+			BlackBerry: function() {
+				return navigator.userAgent.match(/BlackBerry/i);
+			},
+			iOS: function() {
+				return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+			},
+			Opera: function() {
+				return navigator.userAgent.match(/Opera Mini/i);
+			},
+			Windows: function() {
+				return navigator.userAgent.match(/IEMobile/i);
+			},
+			Firefox: function() {
+				return navigator.userAgent.match(/Firefox/i);
+			},
+			Edge: function() {
+				return navigator.userAgent.match(/Edge/i);
+			},
+			any: function() {
+				return (LeadCore.isMobile.Android() || LeadCore.isMobile.BlackBerry() || LeadCore.isMobile.iOS() || LeadCore.isMobile.Opera() || LeadCore.isMobile.Windows());
+			}
+		},
+		createLGWGElement: function(name, attributes ) {
+			var el = document.createElement(name);
+			if (typeof attributes == 'object') {
+				for (var i in attributes) {
+					el.setAttribute(i, attributes[i]);
+
+					if ( i.toLowerCase() == 'class' ) {
+						el.className = attributes[i]; // for IE
+
+					} else if ( i.toLowerCase() == 'style' ) {
+						el.style.cssText = attributes[i]; // for IE
+					}
+				}
+			}
+			for (var i = 2; i < arguments.length; i++) {
+				var val = arguments[i];
+				if (typeof val == 'string') {
+					el.innerHTML = val;
+					val = document.createTextNode('');
+				};
+				el.appendChild(val);
+			}
+			return el;
+		},
+		server: {
+			protocol        : null,
+			domain          : null,
+			port            : null,
+			iframe          : null,
+			getIframePath   : function() {
+				return this.protocol + "://" + this.domain + ((this.port.length > 0 && this.port !== "80")?this.port:"") + "/" + this.iframe;
+			},
+			getDomainPath   : function() {
+				return this.protocol + "://" + this.domain + ((this.port.length > 0 && this.port !== "80")?this.port:"");
+			},
+			getPushLeadPath : function() {
+				return LeadCore.base + "/pushLead";
+			},
+			getPushInfoPath : function() {
+				return LeadCore.base + "/pushInfo";
+			}
+
+		},
+		siteId    : getLGSiteIdFromScript(),
+		baseLGURL : LeadCoreDEV.baseUrl[LeadCoreDEV.currentMode],
+		base      : LeadCoreDEV.baseUrl[LeadCoreDEV.currentMode],
+		visit     : null,
+		isWidgetActive: [],
+		addTopForDot: {
+			placeNewLabel: "default",
+			placeOldLabel: "default"
+		},
+		mouse: {
+			posX: 0,
+			posY: 0
+		},
+		addScriptItem: function(url) {
+			var newScript  = document.createElement("script");
+			newScript.src  = url;
+			document.getElementsByTagName("body")[0].appendChild(newScript);
+		},
+		getCookie: function (cname) {
+			var name = cname + "=";
+			var ca = document.cookie.split(';');
+			for ( var i=0; i < ca.length; i++) {
+				var c = ca[i];
+				while (c.charAt(0)==' ') c = c.substring(1);
+				if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+			}
+			return "";
+		},
+		eventFire: function(el, etype){
+			if (el.fireEvent) {
+				(el.fireEvent('on' + etype));
+			} else {
+				var evObj = document.createEvent('Events');
+				evObj.initEvent(etype, true, false);
+				el.dispatchEvent(evObj);
+			}
+		},
+		setCookie: function(cname, cvalue, exdays) {
+			var exp = 0;
+			var d = new Date();
+
+			if (exdays > 0) {
+				exp = d.setTime(d.getTime() + (exdays*24*60*60*1000));
+				exp = d.toUTCString();
+			}
+
+			var expires = "expires="+exp;
+			document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
+		},
+		eraseCookie: function (cname) {
+		    document.cookie = cname + '=; max-age=0';
+		},
+		setActionLockCookie: function() {
+			var d = new Date();
+			LeadCore.setCookie("LGWGActionLock", d.getTime(), 365);
+		},
+		isActionLockExpire: function(gap, cookieName) {
+			var currentD = new Date();
+			var actionLockTime = LeadCore.getCookie(cookieName);
+			if (actionLockTime.length) {
+				var hours = Math.abs(currentD.getTime() - actionLockTime) / 3600000;
+				if (hours > gap) {
+					LeadCore.eraseCookie('LGWGActionLock');
+					return false;
+				} else {
+					return true;
+				}
+			}
+			
+			return false;
+		},
+		sendAnalyticGlobal: function (widgetID) {
+			if (typeof LeadCore.analyticsParams !== "undefined") {
+				var analParams = LeadCore.analyticsParams;
+				//var widgetID = metrikaId;
+				console.log("MA sending prepare");
+
+				for (var i = 0; i < analParams.length; i++) {
+					var analyticsParamsObj = analParams[i];
+					if (analyticsParamsObj.type == "ymetrika") {
+						if (typeof window['yaCounter'+analyticsParamsObj.counter+''] != 'undefined') {
+							window['yaCounter'+analyticsParamsObj.counter+''].reachGoal('leadgenic_lead_send');
+							window['yaCounter'+analyticsParamsObj.counter+''].reachGoal('leadgenic_widget_lead_'+widgetID);
+							console.log("MA sending metrics");
+						}
+					}
+					if (analyticsParamsObj.type == "ganalytics") {
+						if (typeof window.dataLayer != 'undefined' && window.dataLayer.length) {
+							window.dataLayer.push({'event': 'leadgenic_lead_send'});
+							window.dataLayer.push({'event': 'leadgenic_widget_lead_'+widgetID});
+						}
+						if (analyticsParamsObj.service === "UNIVERSAL" && (typeof window.ga != 'undefined')) {
+							window.ga('send', 'event', 'lg_click', 'leadgenic_lead_send');
+							window.ga('send', 'event', 'lg_click', 'leadgenic_widget_lead_'+widgetID);
+							console.log("MA sending UAnalytics");
+						}
+						if ((analyticsParamsObj.service === "GTAG") && (typeof window.gtag != 'undefined')) {
+							window.gtag('event', 'leadgenic_lead_send', {'event_category': 'lg_click'});
+							window.gtag('event', 'leadgenic_widget_lead_'+widgetID, {'event_category': 'lg_click'});
+							console.log("MA sending GTAGAnalytics");
+						}
+					}
+				}
+			}
+		},
+		setCorrectIntervalForCookie: function(intervalType, value) {
+			if (intervalType == "DAY") {
+				return value;
+			} else if (intervalType == "HOU") {
+				return value/24;
+			} else if (intervalType == "MIN") {
+				return (value/(24*60));
+			} else if (intervalType == "SEC") {
+				return (value/(24*60*60));
+			}
+		},
+		loadSocTracking: function() {
+            LeadCore.server.domain   = LeadCore.visit.domainInfo.domain;
+            LeadCore.server.iframe   = LeadCore.visit.domainInfo.iframe;
+            LeadCore.server.port 	 = LeadCore.visit.domainInfo.port;
+            LeadCore.server.protocol = LeadCore.visit.domainInfo.protocol;
+			this.addScriptItem("${base}/socTracking?site=${site.id}");
+		},
+		loadWidgets: function(widgets, i, isTemplate) {
+			var pointsStyle = document.createElement('link');
+			var pointsScript = document.createElement('script');
+			if(isTemplate) {
+				pointsStyle.href = widgets[i].template.css;
+				pointsScript.src = widgets[i].template.js;
+			} else {
+				pointsStyle.href  = widgets[i].css;
+				pointsScript.src  = widgets[i].js;
+			}
+			pointsScript.setAttribute("type", "text/javascript");
+			pointsScript.setAttribute("charset", "UTF-8");
+            //pointsScript.setAttribute("async", "false");
+            pointsScript.setAttribute("defer", "");
+			pointsStyle.setAttribute("rel", "stylesheet");
+			document.getElementsByTagName("head")[0].appendChild(pointsStyle);
+			document.getElementsByTagName("body")[0].appendChild(pointsScript);
+		},
+		loadCouponCallbackGeneralScript: function() {
+
+            // var LGWGPathForDevCouponCallbackGeneral = "http://my-local-root.com/leadgenic/dev/coupon-callback/";
+			//var LGWGPathForDevCouponCallbackGeneral = "https://cdn.leadgenic.ru/dev/lg_widgets_l11/coupon-callback/";
+			var LGWGPathForDevCouponCallbackGeneral = "https://cdn.leadgenic.ru/production/lg_widgets_l11/coupon-callback/";
+
+			var ccStyle = document.createElement('link');
+			var ccScript = document.createElement('script');
+            ccStyle.href = LGWGPathForDevCouponCallbackGeneral + "lgwg_coupon_callback.css";
+            ccScript.src = LGWGPathForDevCouponCallbackGeneral + "lgwg_coupon_callback.js";
+            ccScript.setAttribute("async", "");
+            ccScript.setAttribute("defer", "");
+            ccStyle.setAttribute("rel", "stylesheet");
+            document.getElementsByTagName("head")[0].appendChild(ccStyle);
+            document.getElementsByTagName("body")[0].appendChild(ccScript);
+        },
+		loadWidgetsCheck: function(widgets, isTemplate) {
+			var popupLoad = false;
+            var containerizedLoad = false;
+			var isPinterestLoad = false;
+			var isCouponCallbackGeneral = false;
+			for (var j = 0; j < widgets.length; j++) {
+
+				if (widgets[j].guiprops) {
+				    if (!isCouponCallbackGeneral) {
+                        isCouponCallbackGeneral = true;
+				        LeadCore.loadCouponCallbackGeneralScript();
+                    }
+                    console.log(widgets[j].guiprops);
+					if (widgets[j].type.code === 'label_widget' && (widgets[j].guiprops.labelMain.place === "Нижний левый угол" || widgets[j].guiprops.labelMain.place === "Нижний правый угол")) {
+						LeadCore.addTopForDot.placeNewLabel = widgets[j].guiprops.labelMain.place;
+						LeadCore.addTopForDot.valueNewLabel = widgets[j].guiprops.labelMain.height;
+					}
+
+					for (var g = 0; g < widgets[j].guiprops.social.items.length; g++) {
+						if(widgets[j].guiprops.social.items[g].name == "pinterest") {
+							if(!isPinterestLoad) {
+								console.log("Fire pinterest");
+								var pinScript = document.createElement('script');
+								pinScript.src = "//assets.pinterest.com/js/pinit.js";
+								pinScript.setAttribute("async", "");
+								pinScript.setAttribute("defer", "");
+								document.getElementsByTagName("body")[0].appendChild(pinScript);
+								isPinterestLoad = true;
+							}
+						}
+					}
+				} else {
+					if (widgets[j].type === 1) {
+						if (widgets[j].position === 0) {
+							LeadCore.addTopForDot.placeOldLabel = "Нижний правый угол";
+							LeadCore.addTopForDot.valueOldLabel = 34;
+						}
+						if (widgets[j].position === 2) {
+							LeadCore.addTopForDot.placeOldLabel = "Нижний левый угол";
+							LeadCore.addTopForDot.valueOldLabel = 34;
+						}
+					}
+				}
+
+				if (widgets[j].type.code !== "popup" && widgets[j].type.code !== "containerized") {
+					LeadCore.loadWidgets(widgets, j, isTemplate);
+				} else {
+					if (!popupLoad && widgets[j].type.code === "popup") {
+						LeadCore.loadWidgets(widgets, j, isTemplate);
+						popupLoad = true;
+					}
+                    if (!containerizedLoad && widgets[j].type.code === "containerized") {
+                        LeadCore.loadWidgets(widgets, j, isTemplate);
+                        containerizedLoad = true;
+                    }
+				}
+			}
+		},
+		loadVisit: function() {
+			var url = LeadCore.baseLGURL+"/api/gate/sites/"+LeadCore.siteId+"/visits";
+			var visitId;
+
+			var key = LeadCore.getCookie("lgkey");
+			var usr = LeadCore.getCookie("lgusr");
+
+			var uTime = new Date();
+			uTime = uTime.getTime();
+
+			var titleOfPage = document.title;
+			if(!titleOfPage) {
+				titleOfPage = "No title";
+			}
+
+			var data = {
+				utime: LeadCore.getUserTime(),
+				url: window.location.href || document.URL,
+				title: titleOfPage,
+				userAgent: navigator.userAgent,
+				refer: document.referrer
+			};
+
+			if (key.length > 0 && key !== "undefined") {
+				data.key = key;
+			}
+
+			var oReq = new XMLHttpRequest();
+			oReq.onreadystatechange = function() {
+				if (oReq.readyState==4 && oReq.status==200) {
+					var response = JSON.parse(oReq.responseText).data;
+					if (!response) {
+						return;
+					}
+
+					LeadCore.visit = response;
+					console.log(LeadCore.visit);
+
+					visitId = response.visitInfo.visitId;
+                    LeadCore.currentVisitId = visitId;
+                    LeadCore.smartParams = response.smartParams;
+
+					LeadCore.setCookie("lgvid", visitId, 0);
+
+					if (key === "undefined" || key.length === 0) {
+						if (response.visitInfo.key) {
+							LeadCore.setCookie("lgkey", response.visitInfo.key, 1000);
+						}
+					}
+
+					LeadCore.getPushLeadPath = function(actionId) {
+						return LeadCore.baseLGURL + "/api/gate/sites/" + LeadCore.siteId + "/visits/" + visitId + "/leads";
+					};
+
+					LeadCore.pushCreateLead = function(dParams, sync, callbackGood, callbackError) {
+						var oReq = new XMLHttpRequest();
+
+						var targetUrl = LeadCore.baseLGURL + "/api/gate/sites/" + LeadCore.siteId + "/visits/" + visitId + "/leads";
+
+						oReq.open("POST", targetUrl, sync);
+						oReq.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+						oReq.onload = function() {
+							LeadCore.setActionLockCookie();
+							callbackGood();
+						};
+
+						oReq.onerror = function() {
+							callbackError();
+						};
+
+						oReq.send(JSON.stringify(dParams));
+					};
+
+					LeadCore.pushTargetAction = function(type, widgetId, callbackFunction) {
+						var oReq  = new XMLHttpRequest();
+						var uTime = new Date();
+						uTime = uTime.getTime();
+						var targetUrl = LeadCore.base+"/api/gate/sites/"+LeadCore.siteId+"/visits/"+visitId+"/statistics/";
+
+						var typeSend;
+						if (type === 0 || !type) {
+							typeSend = "EVENT_OPEN";
+						} else if (type === 1) {
+							typeSend = "EVENT_TARGET";
+							LeadCore.setActionLockCookie();
+						}
+						var params = {
+							type: typeSend,
+							timestamp: uTime,
+							widgetId: widgetId
+						};
+
+						oReq.open("POST", targetUrl, true);
+						oReq.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+						if (typeof callbackFunction !== "undefined") {
+							oReq.onreadystatechange = callbackFunction;
+						}
+						oReq.send(JSON.stringify(params));
+					};
+
+
+					if (LeadCore.visit.socTrackingEnabled) {
+						LeadCore.loadSocTracking();
+					}
+
+					LeadCore.analyticsParams = LeadCore.visit.analyticsParams;
+
+					if (LeadCore.visit.smartPoints.length > 0) {
+						LeadCore.activeWidget = 0;
+						LeadCore.visit.actions = [];//HardCode
+						LeadCore.widgets = LeadCore.visit.smartPoints;
+						LeadCore.loadWidgetsCheck(LeadCore.visit.smartPoints);
+					}
+
+					if (LeadCore.visit.widgets.length > 0) {
+						LeadWidgets.list = LeadCore.visit.widgets;
+						LeadCore.loadWidgetsCheck(LeadCore.visit.widgets, true);
+					}
+				}
+			};
+
+			oReq.open("POST", url, true);
+			oReq.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+			oReq.send(JSON.stringify(data));
+		}
+	};
+
+	LeadCore.loadVisit();
+
+})();
+
+
+/*************************************************************************
+ *Smart load event
+ */
+function addLoadEventForLGWidgets(func) {
+	var oldonload = window.onload;
+	if (typeof window.onload != 'function') {
+		window.onload = func;
+	} else {
+		window.onload = function() {
+			if (oldonload) {
+				oldonload();
+			}
+			func();
+		}
+	}
+}
+
+/*************************************************************************
+ *Waves active btn
+ */
+function waveActBtnB(block) {
+	block.classList.add('lg-wg-an-wave-white');
+	setTimeout(function() {
+		block.classList.add('lg-wg-an-wave-blue-2');
+	}, 300);
+	setTimeout(function() {
+		block.classList.remove('lg-wg-an-wave-white');
+		block.classList.remove('lg-wg-an-wave-blue-2');
+	}, 350);
+}
+function waveActBtnG(block) {
+	block.classList.add('lg-wg-an-wave-white');
+	setTimeout(function() {
+		block.classList.add('lg-wg-an-wave-green-2');
+	}, 300);
+	setTimeout(function() {
+		block.classList.remove('lg-wg-an-wave-white');
+		block.classList.remove('lg-wg-an-wave-green-2');
+	}, 350);
+}
+
+
+/*************************************************************************
+ *Validate phone input
+ */
+function validPhoneInput(input) {
+	var re = /^[\d\+\(\)\ -]{4,17}\d$/;
+	var valid = re.test(input);
+	return valid;
+}
+
+/*************************************************************************
+ *Validate email input
+ */
+function validEmailInput(input) {
+	var r = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/i;
+	var valid = r.test(input);
+	return valid;
+}
+
+
+/*************************************************************************
+ *Find closest tag
+ */
+function closest(el, selector) {
+	var matches = el.webkitMatchesSelector ? 'webkitMatchesSelector' : (el.msMatchesSelector ? 'msMatchesSelector' : 'matches');
+
+	while (el.parentElement) {
+		if (el[matches](selector)) return el;
+
+		el = el.parentElement;
+	}
+
+	return null;
+}
+
+/*************************************************************************
+ *Send request
+ */
+function sendRequestLGWG(data, blockOpen, blockClose, btn, closeFunc, interval) {
+	var roistatIdNew = LeadCore.getCookie("roistat_visit");
+	if(roistatIdNew) {
+		data.roistatId = roistatIdNew;
+	}
+	var tInterval = interval || 5000;
+
+	var xhr = new XMLHttpRequest();
+
+	btn.classList.remove('lg-wg-an-wave-ef-b');
+	btn.classList.remove('lg-wg-an-wave-ef-g');
+	btn.classList.add('lg-wg-sub-go');
+	xhr.open("POST", LeadCore.getPushLeadPath("sendWidgetForm"));
+
+	xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+	xhr.onload = function() {
+		LeadCore.setActionLockCookie();
+		blockClose.classList.add('lg-wg-form-none');
+		setTimeout(function () {
+			blockOpen.classList.remove('lg-wg-form-none');
+		}, 500);
+		setTimeout(function () {
+			blockOpen.classList.add('lg-wg-visib');
+		}, 550);
+		btn.classList.add('lg-wg-an-wave-ef-b');
+		btn.classList.remove('lg-wg-sub-go');
+		LeadCore.setCookie('lg-wg-sended', LeadCore.siteId, 7);
+		setTimeout(closeFunc, tInterval);
+	};
+
+	xhr.send(JSON.stringify(data));
+
+}
+
+
+function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return right[Symbol.hasInstance](left); } else { return left instanceof right; } }
+
+function _classCallCheck(instance, Constructor) { if (!_instanceof(instance, Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var phoneMaskFieldClass =
+/*#__PURE__*/
+function () {
+	/***
+	 handler = the DOM object
+	 mask = any preferrable phone mask
+	 placeholder = character used to fill the space when char is deleted
+	 start = the position of the first num character user can enter
+	 ***/
+	//mask = '+7(___)___-____'
+	function PhoneMaskField(handler, mask) {
+		var _this = this;
+
+		var placeholder = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '_';
+
+		_classCallCheck(this, PhoneMaskField);
+
+		this.handler = handler;
+		this.mask = mask;
+		this.placeholder = placeholder;
+		this.placeholderPos = 1; //set the length
+
+		this.setLength(); //set value to placeholder
+
+		this.setValue(); //check where is the first enerable character index
+
+		this.start = this.placeHolderPosition() - 1; //focused - move carette to the first placeholder
+
+		this.handler.addEventListener('focusin', function () {
+			_this.focused();
+		});
+		this.handler.addEventListener('focusout', function () {
+			if (_this.mask === _this.handler.value) {
+				_this.removeValue();
+
+				_this.handler.classList.remove("masked");
+			}
+		}); //keydown - check key/remove placeholder/push numbers further or do nothing
+
+		this.handler.addEventListener('keydown', function (e) {
+			_this.input(e);
+		});
+		this.removeValue();
+	}
+
+	_createClass(PhoneMaskField, [{
+		key: "focused",
+		value: function focused() {
+			if (this.mask === this.handler.value || !this.handler.value) {
+				this.setValue();
+				this.handler.classList.add("masked");
+			}
+
+			this.placeholderPos = this.placeHolderPosition();
+			var el = this.handler;
+			var pos = this.placeholderPos;
+			setTimeout(function () {
+				if (el.setSelectionRange) {
+					el.setSelectionRange(pos, pos);
+				} else {
+					// IE
+					var range = el.createTextRange();
+					range.collapse(true);
+					range.moveEnd("character", pos);
+					range.moveStart("character", pos);
+					range.select();
+				}
+			}, 10);
+		}
+	}, {
+		key: "input",
+		value: function input(e) {
+			//unless it is a tab, prevent action
+			if (!this.isDirectionKey(e.key)) {
+				e.preventDefault();
+			} //if integer, enter it
+
+
+			if (this.isNum(e.key)) {
+				this.changeChar(e.key);
+			} //if user deletes, delete a number
+			else if (this.isDeletionKey(e.key)) {
+				if (e.key === 'Backspace') {
+					var index = this.start;
+					var dir = -1;
+					this.changeChar(this.placeholder, dir, index);
+				} else {
+					this.changeChar(this.placeholder);
+				}
+			}
+		} //put max length to the length of the mask
+
+	}, {
+		key: "setLength",
+		value: function setLength() {
+			this.handler.maxLength = this.mask.length;
+		} //set initial value
+
+	}, {
+		key: "setValue",
+		value: function setValue() {
+			this.handler.value = this.mask;
+		}
+	}, {
+		key: "removeValue",
+		value: function removeValue() {
+			this.handler.value = "";
+		} //check if input is number
+
+	}, {
+		key: "isNum",
+		value: function isNum(i) {
+			return !isNaN(i) && parseInt(Number(i)) == i && !isNaN(parseInt(i, 10));
+		} //check if it is a button to delete stuff
+
+	}, {
+		key: "isDeletionKey",
+		value: function isDeletionKey(i) {
+			return i === 'Delete' || i === 'Backspace';
+		} //check if direction arrow
+
+	}, {
+		key: "isDirectionKey",
+		value: function isDirectionKey(i) {
+			return i === 'ArrowUp' || i === 'ArrowDown' || i === 'ArrowRight' || i === 'ArrowLeft' || i === 'Tab';
+		} //check if value is placeholder
+
+	}, {
+		key: "isPlaceholder",
+		value: function isPlaceholder(i) {
+			return i == this.placeholder;
+		} //check index of closest placeholder
+
+	}, {
+		key: "placeHolderPosition",
+		value: function placeHolderPosition() {
+			return this.handler.value.indexOf(this.placeholder);
+		}
+	}, {
+		key: "changeChar",
+		value: function changeChar(i) {
+			var dir = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+			var max = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.mask.length;
+			var val = this.handler.value;
+			var pos = this.placeholderPos > -1 ? this.placeholderPos : this.handler.selectionStart;
+
+			if (dir === -1) {
+				pos = this.handler.selectionStart - 1;
+			}
+			/**
+			 *  if direction is forward, character to be changed is before the caret
+			 *  else it is behind, so we move position one char back
+			 */
+				//dir > 0 ? pos = this.handler.selectionStart : pos = this.handler.selectionStart - 1;
+
+
+			var newVal = ''; //if cursor at end, do nothing
+
+			if (pos === max) {
+				return false;
+			}
+			/**check if char to be replaced is placeholder or number
+			 if it is placeholder, change it, if it is number
+			 push it, if it is neither, move cursor
+			 **/
+
+
+			if (!this.isNum(val[pos]) && !this.isPlaceholder(val[pos])) {
+				do {
+					pos += dir; //if cursor at end, do nothing
+
+					if (pos === max) {
+						return false;
+					}
+				} while (!this.isNum(val[pos]) && !this.isPlaceholder(val[pos]));
+			} //replace char at index
+
+
+			newVal = this.replaceAt(val, pos, i); //update the value in the field
+
+			this.handler.value = newVal; //move the caret if direction is forward
+
+			if (dir > 0) pos += dir;
+			this.placeholderPos = this.placeHolderPosition();
+			this.handler.selectionStart = pos;
+			this.handler.selectionEnd = pos;
+		}
+	}, {
+		key: "replaceAt",
+		value: function replaceAt(str, pos, val) {
+			return str.substring(0, pos) + val + str.substring(++pos);
+		}
+	}]);
+
+	return PhoneMaskField;
+}();
+
+
+(function () {
+	LGWGService = {
+		setOpacityForBg: function(bgSettings) {
+			return typeof bgSettings.opacity !== 'undefined' ? bgSettings.opacity : '1';
+		},
+		getBorderStyle: function(bgSettings) {
+			if(bgSettings.border && bgSettings.border.enable && bgSettings.border.style) {
+				return bgSettings.border.style;
+			} else {
+				return '0px solid transparent';
+			}
+		},
+		getInnerBorderStyle: function(bgSettings) {
+			if(bgSettings.border && bgSettings.border.enable && bgSettings.border.style && bgSettings.border.thickness && bgSettings.borderRadius) {
+				return (bgSettings.borderRadius - bgSettings.border.thickness + 1) + 'px';
+			} else {
+				return '0';
+			}
+		},
+		getBoxShadowStyle: function(bgSettings) {
+			if (!bgSettings.shadow) {
+				return "0px 1px 5px 0px rgba(0,0,0,0.25)";
+			}
+			if (bgSettings.shadow && bgSettings.shadow.enable && bgSettings.shadow.style) {
+				return bgSettings.shadow.style;
+			}
+			if (bgSettings.shadow && !bgSettings.shadow.enable) {
+				return "0px 1px 5px 0px rgba(0,0,0,0)";
+			}
+		},
+		isFormBorder: function(item) {
+			return item.border.enable ? 'widget-input-border' : '';
+		},
+		getVideoImageWidth: function(item) {
+			if ((window.screen.availWidth <= 760) && LeadCore.isMobile.any()) {
+				if (item.width_type === LeadCore.constants.fromStoS) {
+					return item.widthpx + "px";
+				} else {
+					if (item.widthpx > (window.screen.availWidth - 38)) {
+						return "100%";
+					} else {
+						return item.widthpx + "px";
+					}
+				}
+			} else {
+				return item.widthpx + "px";
+			}
+		},
+		getVideoHeight: function(item, dhVisual) {
+			if ((window.screen.availWidth <= 760) && LeadCore.isMobile.any()) {
+				if (item.width_type === LeadCore.constants.fromStoS) {
+					return ((window.screen.availWidth - 38)/1.666);
+				} else {
+					if (item.widthpx > (window.screen.availWidth - 38)) {
+						return ((window.screen.availWidth - 38)/1.666);
+					} else {
+						return (item.widthpx/1.666);
+					}
+				}
+			} else {
+				if (item.width_type === LeadCore.constants.fromStoS) {
+					return ((dhVisual.widget_ul_width_nopx - 1)/1.666);
+				} else {
+					return (item.widthpx/1.666);
+				}
+			}
+		},
+		hrPosSel: function(item) {
+		    var className = '';
+
+		    if (item.position === LeadCore.constants.onCenter)
+		        className = 'widget1-hr-center';
+
+		    if (item.position === LeadCore.constants.fromRight)
+		        className = 'widget1-hr-right';
+
+		    if (item.position === LeadCore.constants.fromLeft)
+		        className = 'widget1-hr-left';
+
+		    if (item.width_type === LeadCore.constants.fromStoS)
+		        className += ' widget1-hr-full-w';
+
+		    if (item.width_type === LeadCore.constants.ownValue)
+		        className += ' widget1-hr-user-w';
+
+		    if (item.width_type === LeadCore.constants.auto)
+		        className += ' widget1-hr-auto-w';
+
+		    return className;
+		},
+		getAlignOfCloseLink: function(item) {
+			return !item.position ? 'widget1-hr-center' : LGWGService.hrPosSel(item);
+		},
+		getWholeFormWidth: function(item) {
+			return item.form_widthpx || 200;
+		},
+		hrPosSelWholeForm: function(item) {
+		    var className = '';
+		    if (!item.form_position || !item.form_width_type) {
+		    	return 'widget1-w-hr-left widget1-w-hr-full-w';
+		    }
+
+		    if (item.form_position === LeadCore.constants.onCenter)
+		        className = 'widget1-w-hr-center';
+
+		    if (item.form_position === LeadCore.constants.fromRight)
+		        className = 'widget1-w-hr-right';
+
+		    if (item.form_position === LeadCore.constants.fromLeft)
+		        className = 'widget1-w-hr-left';
+
+		    if (item.form_width_type === LeadCore.constants.fromStoS)
+		        className += ' widget1-w-hr-full-w';
+
+		    if (item.form_width_type === LeadCore.constants.ownValue)
+		        className += ' widget1-w-hr-user-w';
+
+		    return className;
+		},
+		heightIfrmPosSel: function(item) {
+		    var className = '';
+
+		    if (item.height_type === LeadCore.constants.auto)
+		        className += ' widget1-hrh-full-w';
+
+		    if (item.height_type === LeadCore.constants.ownValue)
+		        className += ' widget1-hrh-user-w';
+
+		    return className;
+		},
+		classNameFormInputMask: function(type, mask) {
+			return (type === "phone" && mask && mask.enable) ? '' : '';
+		},
+		classNameInputItem: function(item, orient) {
+		    var className = '';
+
+		    if (orient === LeadCore.constants.horizontal) {
+		        if (item.type === 'message') {
+		            className = 'widget-input-gorizontal-textar';
+		        }
+		        else {
+		            className = 'widget-input-gorizontal';
+		        }
+		    }
+		    else {
+		       if (item.type === 'message') {
+		            className = 'widget-input-vert-textar';
+		        }
+		    }
+
+		    return className;
+		},
+		classNameVerticalOrient: function(dhVisual) {
+		    var className = '';
+
+		    if (dhVisual.widget_content_height === LeadCore.constants.ownValue) {
+		        if (dhVisual.widget_content_height_orient === LeadCore.constants.fromBottomBorder)
+		            className = 'widget-main-ul-bottom';
+
+		        if (dhVisual.widget_content_height_orient === LeadCore.constants.onCenterWidget)
+		            className = 'widget-main-ul-center';
+		    } else {
+		    	className = 'widget-main-ul-auto';
+		    }
+
+		    return className;
+		},
+		hrPosSelForm: function(item) {
+		    var className = '';
+
+		    if (item.width_type === LeadCore.constants.fromStoS)
+		        className += ' widget1-hr-full-w';
+
+		    if (item.width_type === LeadCore.constants.ownValue)
+		        className += ' widget1-hr-user-w';
+
+		    return className;
+		},
+		btnWidthSel: function(item) {
+		    var className = '';
+
+		    if (item.btn_width === LeadCore.constants.fromStoS)
+		        className = 'button-full-width';
+
+		    if (item.btn_width === LeadCore.constants.ownValue)
+		        className = 'button-user-width';
+
+		    if (item.btn_width === LeadCore.constants.auto)
+		        className = 'button-auto-width';
+
+		    return className;
+		},
+		btnPosSel: function(visualObj) {
+		    var className = '';
+
+		    if (visualObj.button.position === LeadCore.constants.onCenter)
+		        className = 'widget1-btn-bl-center';
+
+		    if (visualObj.button.position === LeadCore.constants.fromRight)
+		        className = 'widget1-btn-bl-right';
+
+		    if (visualObj.dhVisual.place === LeadCore.constants.fromLeft)
+		        className = 'widget1-btn-bl';
+
+		    return className;
+		},
+		btnExitPosSel: function(item, place) {
+		    var className = '';
+
+		    if (item.position === LeadCore.constants.onCenter)
+		        className = 'widget1-btn-bl-center';
+
+		    if (item.position === LeadCore.constants.fromRight)
+		        className = 'widget1-btn-bl-right';
+
+		    if (place === LeadCore.constants.fromLeft)
+		        className = 'widget1-btn-bl';
+
+		    return className;
+		},
+		btnStyleSel: function(item) {
+		    var className = '';
+
+		    if(item.styleType) {
+			    if (item.styleType === 'Border Style')
+			        className = 'widget-btn-border-style-none-bg';
+
+			    if (item.styleType === 'Material')
+			        className = 'widget-btn-style__material widget-btn-border-style-none-border';
+
+			    if (item.styleType === 'Flat')
+			        className = 'widget-btn-style__flat widget-btn-border-style-none-border';
+
+			    if (item.styleType === 'Default')
+			        className = 'widget-btn-border-style-none-border';
+		    }
+
+		    return className;
+		},
+		classNameImg: function(imageObj) {
+		    var className = '';
+
+		    if (imageObj.enable) {
+		        if (imageObj.place === LeadCore.constants.fromLeft)
+		            className = 'widget-image-left';
+
+		        if (imageObj.place === LeadCore.constants.fromRight)
+		            className = 'widget-image-right';
+
+		        if (imageObj.place === LeadCore.constants.fromBottom)
+		            className = 'widget-image-bottom';
+
+		        if (imageObj.place === LeadCore.constants.fromTop)
+		            className = 'widget-image-top';
+
+		        if (imageObj.visual === LeadCore.constants.toAllWidth && imageObj.place === LeadCore.constants.fromLeft)
+		            className = 'widget-image-left-all'
+
+		        if (imageObj.visual === LeadCore.constants.toAllWidth && imageObj.place === LeadCore.constants.fromRight)
+		            className = 'widget-image-right-all'
+		    } else {
+		    	className = 'lgwg-none';
+		    }
+
+		    return className;
+		},
+		classNameImgMain: function(imageObj) {
+		    var className = '';
+
+		    if (imageObj.enable) {
+		        if (imageObj.place === LeadCore.constants.fromLeft)
+		            className = 'widget-main-img-left';
+
+		        if (imageObj.place === LeadCore.constants.fromRight)
+		            className = 'widget-main-img-right';
+
+		        if (imageObj.place === LeadCore.constants.fromBottom)
+		            className = 'widget-main-img-bottom';
+
+		        if (imageObj.place === LeadCore.constants.fromTop)
+		            className = 'widget-main-img-top';
+		    }
+
+		    return className;
+		},
+		imgSetupUrl: function(imageObj) {
+			return imageObj.enable ? "url('" + imageObj.url + "') center center / cover no-repeat #fff" : "";
+		},
+		imgSetupSize: function(imageObj) {
+			var style = '';
+
+			if (imageObj.enable) {
+				style = "width:" + imageObj.width + "px;height:" + imageObj.height + "px;";
+
+				if (imageObj.place === LeadCore.constants.fromTop) {
+					style = "width:100%;height:" + imageObj.height + "px;";
+				}
+
+				if (imageObj.image.place === LeadCore.constants.fromBottom) {
+					style = "width:100%;height:" + imageObj.height + "px;";
+				}
+			}
+			return style;
+		},
+		isTextEnable: function(item) {
+			return !item.enable ? " lgwg-none" : "";
+		},
+		isTextShadow: function(item) {
+			return !item.textShadow.enable ? 'no-text-shadow-imp' : '';
+		},
+		hexToRgb: function(r,t) {
+			var n=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(r),a=function(){return void 0==this.alpha?"rgb("+this.r+", "+this.g+", "+this.b+")":(this.alpha>1?this.alpha=1:this.alpha<0&&(this.alpha=0),"rgba("+this.r+", "+this.g+", "+this.b+", "+this.alpha+")")};return void 0==t?n?{r:parseInt(n[1],16),g:parseInt(n[2],16),b:parseInt(n[3],16),toString:a}:null:(t>1?t=1:0>t&&(t=0),n?{r:parseInt(n[1],16),g:parseInt(n[2],16),b:parseInt(n[3],16),alpha:t,toString:a}:null)
+		},
+		getRGBAColor: function(item) {
+		    return (LGWGService.hexToRgb(item.textShadow.color, item.textShadow.opacity)).toString();
+		},
+		getCouponRGBABG: function(item) {
+		    return (LGWGService.hexToRgb(item.color, item.opacity)).toString();
+		},
+		setWideOrNarrowBgStyle: function(dhVisual) {
+			if ((dhVisual.widget_width_nopx !== 0) && (dhVisual.widget_height_nopx !== 0)) {
+		        if ((dhVisual.widget_width_nopx/dhVisual.widget_height_nopx) >= (16/9)) {
+		            return "wide-video-bg-ext";
+		        } else {
+		            return "narrow-video-bg-ext"; 
+		        }
+		    }
+
+		    return "";
+		},
+		redirectParams: function(data, redirectUrl) {
+			var EMAIL_CONST = '{email}',
+			    PHONE_CONST = '{phone}',
+			    NAME_CONST = '{name}',
+			    MESSAGE_CONST = '{message}';
+
+			var url = redirectUrl;
+
+			if(!data) {
+				if(url.indexOf('?') !== -1 && (url.indexOf(EMAIL_CONST)!== -1 || url.indexOf(PHONE_CONST) !== -1 || url.indexOf(NAME_CONST) !== -1 || url.indexOf(MESSAGE_CONST) !== -1)) {
+					url = url.substr(0, url.indexOf('?'));
+				}
+				return url;
+			}
+
+			if(url.indexOf(EMAIL_CONST) !== -1 && data.email) {
+				url = url.replace(EMAIL_CONST, data.email);
+			}
+
+			if(url.indexOf(PHONE_CONST) !== -1 && data.phone) {
+				url = url.replace(PHONE_CONST, data.phone);
+			}
+
+			if(url.indexOf(NAME_CONST) !== -1 && data.firstName) {
+				url = url.replace(NAME_CONST, data.firstName);
+			}
+
+			if(url.indexOf(MESSAGE_CONST) !== -1 && data.comment) {
+				url = url.replace(MESSAGE_CONST, data.comment);
+			}
+
+			return url;
+		},
+		getTopValueOfColorPod: function(LGWGNewDotformBlock, LGWGNewDotButtonBlock, visualObj) {
+			var offsetPadding = 6;
+		    var topOfColorPod = 0;
+
+			if (LGWGNewDotformBlock) {
+				if (visualObj.form.orient === LeadCore.constants.vertical) {
+		            offsetPadding = - 8;
+		        }
+		        topOfColorPod = (LGWGNewDotformBlock.getBoundingClientRect().top - 20 + offsetPadding);
+			} else if (LGWGNewDotButtonBlock) {
+				offsetPadding = 8;
+				topOfColorPod = (LGWGNewDotButtonBlock.getBoundingClientRect().top - 20 - offsetPadding);
+			}
+
+			if (visualObj.bg.border && visualObj.bg.border.enable) {
+		        topOfColorPod = topOfColorPod - visualObj.bg.border.thickness;
+		    }
+			
+			return topOfColorPod;
+		}
+	};
+})();
+
+
+

@@ -1,0 +1,454 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', Arial, sans-serif;
+    color: #000;
+}
+
+body {
+    background-color: #f9f9fd;
+}
+
+.head-p {
+    padding-top: 2em;
+    padding-bottom: 1em;
+}
+
+.title-head {
+    color: #000000;
+    font-size: 37px;
+    font-family: 'Arial', Arial, sans-serif;
+    line-height: 1.1;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+.title-izi {
+    color: #000000;
+    font-size: 26px;
+    font-family: 'Roboto', Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 300;
+}
+
+.btn-lead, .btn-login {
+    padding: 11px 20px;
+}
+
+.btn-lead {
+    color: #ffffff;
+    font-size: 19px;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: 500;
+    border-width: 1px;
+    border-radius: 30px;
+    background-color: #3092e3;
+    background-position: center center;
+    border-color: transparent;
+    border-style: solid;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.btn-login {
+    color: #0a89ff;
+    font-size: 19px;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: 500;
+    border-width: 2px;
+    border-radius: 30px;
+    background-color: #ffffff;
+    background-position: center center;
+    border-color: #1892f5;
+    border-style: solid;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.btn-lead, .btn-login{
+    line-height: 60px;
+}
+.about_title {
+    font-weight: 800!important;
+    font-size: 2em;
+    padding-bottom: 5vh;
+}
+
+.about_description, .slider_description {
+    font-weight: 300;
+    font-size: 22px;
+}
+
+.about_description b {
+    font-weight: 600;
+}
+
+.slider_text {
+    padding-top: 20px;
+    padding: 20px 10%;
+}
+
+.slider_title {
+    font-size: 40px;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: 800!important;
+    color: #000;
+}
+.slider_feedback {
+    min-height: 225px;
+}
+.carousel-control-prev {
+    transform:rotate( 180deg);
+}
+.carousel-control-next {
+    transform:rotate( 360deg);
+}
+.carousel-control-next, .carousel-control-prev {
+     opacity: .8;
+}
+.demo-slider {
+    top: 207px;
+    align-items: flex-start;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(232, 232, 232, 1);
+    border-radius: 50%;
+    padding: 11px;
+    left: 15px;
+}
+
+.demo-img>img {
+    height: 362px;
+    overflow: hidden;
+    object-fit: cover;
+    object-position: center;
+}
+
+.qr_image {
+    background-color: #fff;
+    height: 55%;
+    text-align: center;
+    display: revert !important;
+}
+
+.ehover13 h2 {
+    color: #FFF;
+    padding: 1em 0 0;
+}
+
+.ehover13 p {
+    color: white;
+    font-size: 19px;
+}
+
+.hover h2 {
+    font-size: 24px;
+}
+
+.ehover13:hover .overlay {
+    padding: 10px 0px;
+}
+
+iframe {
+    border: none !important;
+}
+
+.form-control::-webkit-input-placeholder {
+    color: #b5b5b5;
+    opacity: 1;
+}
+
+/* webkit */
+
+.form-control::-moz-placeholder {
+    color: #b5b5b5;
+    opacity: 1;
+}
+
+/* Firefox 19+ */
+
+.form-control:-moz-placeholder {
+    color: #b5b5b5;
+    opacity: 1;
+}
+
+/* Firefox 18- */
+
+.form-control:-ms-input-placeholder {
+    color: #b5b5b5;
+    opacity: 1;
+}
+
+.stepWidget {
+    font-weight: 500;
+    font-size: 23px;
+}
+
+.stepWidget span {
+    color: #007bff;
+}
+
+.stepWidget input {
+    margin-top: 10px;
+}
+
+.step4image img {
+    width: 5vw;
+}
+
+.step4imageActive img {
+    filter: opacity(0.8);
+    padding: 7px;
+    transition: 0.8s;
+}
+
+.transition05 {
+    opacity: 0;
+    /*Элемент полностью прозрачный (невидимый)*/
+    transition: 1s;
+    /*Скорость перехода состояния элемента*/
+    animation: show 1.5s 1;
+    /* Указываем название анимации, её время и количество повторов*/
+    animation-fill-mode: forwards;
+    /* Чтобы элемент оставался в конечном состоянии анимации */
+    animation-delay: 0s;
+    /* Задержка перед началом */
+}
+
+@keyframes show {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+textarea.form-control#readyСodeCopy {
+    resize: none;
+}
+
+.step2imgInst {
+    width: 180px;
+    height: 390px;
+    margin: 10px;
+}
+
+#step2img img {
+    width: 100%;
+    height: 40vh;
+    object-fit: cover;
+}
+
+.step2imgRefresh {
+    padding-top: 13vh !important;
+    font-size: 100px;
+    color: #007bff;
+    z-index: 3;
+    text-align: center;
+}
+
+.step2imgSelect {
+    border: 6px solid #007bff;
+    opacity: 0.5;
+    filter: alpha(opacity=60);
+    transition: 0.5s;
+}
+
+.step2imgRefresh a {
+    text-decoration: none;
+}
+
+#chekUrlID {
+    float: right;
+}
+
+.loader {
+    border: 10px solid #e6e8eb;
+    border-top: 10px solid #1787ff;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 1.7s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Form Style */
+
+.form-LogInForm {
+    background: #fff;
+    padding-bottom: 40px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.form-LogInForm .heading {
+    display: block;
+    font-size: 35px;
+    font-weight: 700;
+    padding: 0 0 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 30px;
+}
+
+.form-LogInForm .form-group {
+    padding: 0 40px;
+    margin: 0 0 25px 0;
+    position: relative;
+}
+
+.form-LogInForm .form-control {
+    background: #f0f0f0;
+    border: none;
+    border-radius: 20px;
+    box-shadow: none;
+    padding: 0 20px 0 45px;
+    height: 40px;
+    transition: all 0.3s ease 0s;
+}
+
+.form-LogInForm .form-control:focus {
+    background: #e0e0e0;
+    box-shadow: none;
+    outline: 0 none;
+}
+
+.form-LogInForm .form-group i {
+    position: absolute;
+    top: 12px;
+    left: 60px;
+    font-size: 17px;
+    color: #c8c8c8;
+    transition: all 0.5s ease 0s;
+}
+
+.form-LogInForm .form-control:focus+i {
+    color: #00b4ef;
+}
+
+.form-LogInForm .fa-question-circle {
+    display: inline-block;
+    position: absolute;
+    top: 12px;
+    right: 60px;
+    font-size: 20px;
+    color: #808080;
+    transition: all 0.5s ease 0s;
+}
+
+.form-LogInForm .fa-question-circle:hover {
+    color: #000;
+}
+
+.form-LogInForm .main-checkbox {
+    float: left;
+    width: 20px;
+    height: 20px;
+    background: #11a3fc;
+    border-radius: 50%;
+    position: relative;
+    margin: 5px 0 0 5px;
+    border: 1px solid #11a3fc;
+}
+
+.form-LogInForm .main-checkbox label {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+.form-LogInForm .main-checkbox label:after {
+    content: "";
+    width: 10px;
+    height: 5px;
+    position: absolute;
+    top: 5px;
+    left: 4px;
+    border: 3px solid #fff;
+    border-top: none;
+    border-right: none;
+    background: transparent;
+    opacity: 0;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.form-LogInForm .main-checkbox input[type=checkbox] {
+    visibility: hidden;
+}
+
+.form-LogInForm .main-checkbox input[type=checkbox]:checked+label:after {
+    opacity: 1;
+}
+
+.form-LogInForm .text {
+    float: left;
+    margin-left: 7px;
+    line-height: 20px;
+    padding-top: 5px;
+    text-transform: capitalize;
+}
+
+.form-LogInForm .btn {
+    float: right;
+    font-size: 14px;
+    color: #fff;
+    background: #00b4ef;
+    border-radius: 30px;
+    padding: 10px 25px;
+    border: none;
+    text-transform: capitalize;
+    transition: all 0.5s ease 0s;
+}
+
+.code-group .btn-copy-code {
+    position: absolute;
+    bottom: 15px;
+    right: 30px;
+    height: 30px;
+}
+
+.code-group .code-copy {
+    padding-bottom: 50px;
+    padding-right: 70px;
+}
+
+#widgetDemoUrl {
+    font-size: 1.5em;
+}
+
+.title2 {
+    font-size: 26px;
+}
+
+@media only screen and (max-width: 479px) {
+    .form-LogInForm .form-group {
+        padding: 0 25px;
+    }
+    .form-LogInForm .form-group i {
+        left: 45px;
+    }
+    .form-LogInForm .btn {
+        padding: 10px 20px;
+    }
+}
+
+.bg-feed {
+    padding-top: 45px;
+    padding-bottom: 75px;
+    background-color: #f0f0fa;
+}
+
+.inner-telegeram {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    width: 7vh;
+}

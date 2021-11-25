@@ -1,0 +1,145 @@
+// var LGWGPathForDevelopmentCouponCallback = "http://my-local-root.com/leadgenic/dev/coupon-callback/";
+//var LGWGPathForDevelopmentCouponCallback = "https://cdn.leadgenic.ru/dev/lg_widgets_l11/coupon-callback/";
+var LGWGPathForDevelopmentCouponCallback = "https://cdn.leadgenic.ru/production/lg_widgets_l11/coupon-callback/";
+
+for (var i = 0; i < LeadWidgets.list.length; i++) {
+	if (LeadCoreExt.isItFormCallbackCoupon(LeadWidgets.list[i].guiprops.form)) {
+		idCouponCallbackNew(LeadWidgets.list[i], "form");
+	} 
+	if (LeadCoreExt.isItExitCallbackCoupon(LeadWidgets.list[i].guiprops.exit)) {
+		idCouponCallbackNew(LeadWidgets.list[i], "exit");
+	}
+	if (LeadCoreExt.isItSocialCallbackCoupon(LeadWidgets.list[i].guiprops.social)) {
+		idCouponCallbackNew(LeadWidgets.list[i], "social");
+	}
+}
+
+function idCouponCallbackNew(ccObj, type) {
+	var widgetCCPosition = {
+		left: "auto",
+		right: "auto",
+		top: "auto",
+		bottom: "auto",
+		marginLeft: "0px",
+		marginTop: "0px",
+		class: "wv-b-none-pop"
+	};
+
+	var CCSettings = ccObj.guiprops[type].couponCallback,
+		CCId = ccObj.id;
+
+
+	function LGWGNewLabelMainCNTR() {
+
+		function setMobileClass() {
+			if ((window.screen.availWidth <= 760) && LeadCore.isMobile.any()) {
+				return "visual-block-widget-lgwg-cc-mobile";
+			} else {
+				return "";
+			}
+		}
+
+		function setPopupPlacement(position) {
+			var DEF_CW = 420;
+			var DEF_CH = 140;
+
+			//Placement for widget
+			if (position === LeadCore.constants.topLeftCorner) {
+				widgetCCPosition.class = "wv-cc-top-left-pop";
+			}
+			if (position === LeadCore.constants.topRightCorner) {
+				widgetCCPosition.class = "wv-cc-top-right-pop";
+			}
+			if (position === LeadCore.constants.bottomLeftCorner) {
+				widgetCCPosition.class = "wv-cc-bottom-left-pop";
+			}
+			if (position === LeadCore.constants.bottomRightCorner) {
+				widgetCCPosition.class = "wv-cc-bottom-right-pop";
+			}
+			if (position === LeadCore.constants.topCenterCorner) {
+				widgetCCPosition.class = "wv-cc-top-mid-pop";
+				widgetCCPosition.left = "50%";
+				widgetCCPosition.marginLeft = - (DEF_CW / 2) + 'px'; 
+			}
+			if (position === LeadCore.constants.bottomCenterCorner) {
+				widgetCCPosition.class = "wv-cc-bottom-mid-pop";
+				widgetCCPosition.left = "50%";
+				widgetCCPosition.marginLeft = - (DEF_CW / 2) + 'px'; 
+			}
+			if (position === LeadCore.constants.centerLeftCorner) {
+				widgetCCPosition.class = "wv-cc-mid-left-pop";
+				widgetCCPosition.top = "50%";
+				widgetCCPosition.marginTop = - (DEF_CH / 2) + 'px'; 
+			}
+			if (position === LeadCore.constants.centerRightCorner) {
+				widgetCCPosition.class = "wv-cc-mid-right-pop";
+				widgetCCPosition.top = "50%";
+				widgetCCPosition.marginTop = - (DEF_CH / 2) + 'px';
+			}
+			if (position === LeadCore.constants.centerCenterCorner) {
+				widgetCCPosition.class = "wv-cc-mid-mid-pop";
+				widgetCCPosition.left = "50%";
+				widgetCCPosition.marginLeft = - (DEF_CW / 2) + 'px'; 
+				widgetCCPosition.marginTop = - (DEF_CH / 2) + 'px'; 
+			}
+		}
+		setPopupPlacement(CCSettings.coupon.positionPopup);
+
+		function prepareFrame() {
+			var divForFrameLabel = document.createElement("div");
+		
+			divForFrameLabel.setAttribute("id", CCId + "__div__" + type);
+			divForFrameLabel.setAttribute("class", "lgwg-popup-frame-block wv-cc-none-start-pop "+ widgetCCPosition.class + " " + setMobileClass());
+			divForFrameLabel.setAttribute("style", "background:none!important;position:fixed!important;margin-left:"+widgetCCPosition.marginLeft+";margin-top:"+widgetCCPosition.marginTop+";left:"+widgetCCPosition.left+";right:"+widgetCCPosition.right+";top:"+widgetCCPosition.top+";bottom:"+widgetCCPosition.bottom+";width:0;height:0;z-index:999999998;");
+			document.getElementsByTagName("body")[0].appendChild(divForFrameLabel);
+
+		    var ifrm = document.createElement("iframe");
+		    ifrm.setAttribute("src", "about:blank");
+		    ifrm.setAttribute("frameBorder", "0");
+		    ifrm.setAttribute("id", CCId + "__iframe__" + type);
+		    ifrm.setAttribute("name", "lgwgIframeLabel" + CCId + "__" + type);
+		    ifrm.setAttribute("style", "display:block!important;position:relative!important;width:100%!important;height:100%!important;border:none!important;z-index:2;background:none!important");
+		    ifrm.addEventListener('load', function () {
+		    	injectCode();
+		    }, false);
+		    document.getElementById(CCId + "__div__" + type).appendChild(ifrm);
+
+		    function injectCode() {
+				var cssLink = document.createElement("link");
+				cssLink.href = LGWGPathForDevelopmentCouponCallback+ "lgwg_coupon_callback_frame.css";
+				cssLink.rel  = "stylesheet";
+				cssLink.type = "text/css";
+
+				ifrm.contentWindow.document.getElementsByTagName("head")[0].appendChild(cssLink);
+			}
+
+			var doc = ifrm.contentWindow.document;
+
+			var jsUrl = LGWGPathForDevelopmentCouponCallback + "lgwg_coupon_callback_frame.js";
+
+			doc.open().write('<body onload="' + 
+				'var d = document;var newDScr = d.getElementsByTagName(\'head\')[0].' + 
+				'appendChild(d.createElement(\'script\'));newDScr.src=\''+jsUrl+'\';' +
+				'newDScr.type=\'text/javascript\';newDScr.charset=\'UTF-8\'">');
+			  
+		    doc.close(); //iframe onload event happens
+
+		}
+		//prepareFrame();
+
+		// test
+		if (!document.hidden) {
+			prepareFrame();
+		} else {
+			var LGWGPopupIntervalForStart = setInterval(function () { 
+			  if (!document.hidden) {
+			  	clearInterval(LGWGPopupIntervalForStart);
+			  	prepareFrame();
+			  }
+			}, 1000);
+		}
+
+	}
+
+	LGWGNewLabelMainCNTR();
+}

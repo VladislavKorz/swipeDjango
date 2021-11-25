@@ -1,0 +1,202 @@
+if(!createLGWGElement) {
+	var createLGWGElement = LeadCore.createLGWGElement;
+}
+
+// var LGWGPathForDevelopmentPopup = "http://my-local-root.com/leadgenic/dev/popup/";
+//var LGWGPathForDevelopmentPopup = "https://cdn.leadgenic.ru/dev/lg_widgets_l11/popup/";
+var LGWGPathForDevelopmentPopup = "https://cdn.leadgenic.ru/production/lg_widgets_l11/popup/";
+
+for (var i = 0; i < LeadWidgets.list.length; i++) {
+	if (LeadWidgets.list[i].type.code == 'popup') {
+		idPopupSampleNew(LeadWidgets.list[i]);
+	}
+}
+
+function idPopupSampleNew(labelObj) {
+	var widgetPopupPosition = {
+		left: "auto",
+		right: "auto",
+		top: "auto",
+		bottom: "auto",
+		marginLeft: "0px",
+		marginTop: "0px",
+		class: "wv-b-none-pop"
+	};
+
+	var visualObjNewLabel = labelObj.guiprops,
+		autoInviteObjNewLabel = labelObj.autoinvite,
+		restrNewLabel = labelObj.restrictions,
+		widgetLGWGNewLabelName = labelObj.name,
+		widgetLGWGNewLabelId = labelObj.id,
+		soundBeepNewLabel = labelObj.template.sound;
+
+
+	function LGWGNewLabelMainCNTR() {
+
+		function setPopupPlacement() {
+			//Placement for widget
+			if (visualObjNewLabel.popupMain.place === LeadCore.constants.topLeftCorner) {
+				widgetPopupPosition.class = "wv-b-top-left-pop";
+			}
+			if (visualObjNewLabel.popupMain.place === LeadCore.constants.topRightCorner) {
+				widgetPopupPosition.class = "wv-b-top-right-pop";
+			}
+			if (visualObjNewLabel.popupMain.place === LeadCore.constants.bottomLeftCorner) {
+				widgetPopupPosition.class = "wv-b-bottom-left-pop";
+			}
+			if (visualObjNewLabel.popupMain.place === LeadCore.constants.bottomRightCorner) {
+				widgetPopupPosition.class = "wv-b-bottom-right-pop";
+			}
+			if (visualObjNewLabel.popupMain.place === LeadCore.constants.topCenterCorner) {
+				widgetPopupPosition.class = "wv-b-top-mid-pop";
+				widgetPopupPosition.left = "50%";
+				widgetPopupPosition.marginLeft = - (visualObjNewLabel.dhVisual.widget_width_nopx / 2) + 'px'; 
+			}
+			if (visualObjNewLabel.popupMain.place === LeadCore.constants.bottomCenterCorner) {
+				widgetPopupPosition.class = "wv-b-bottom-mid-pop";
+				widgetPopupPosition.left = "50%";
+				widgetPopupPosition.marginLeft = - (visualObjNewLabel.dhVisual.widget_width_nopx / 2) + 'px'; 
+			}
+			if (visualObjNewLabel.popupMain.place === LeadCore.constants.centerLeftCorner) {
+				widgetPopupPosition.class = "wv-b-mid-left-pop";
+				widgetPopupPosition.top = "50%";
+				widgetPopupPosition.marginTop = - (visualObjNewLabel.dhVisual.widget_height_nopx / 2) + 'px'; 
+			}
+			if (visualObjNewLabel.popupMain.place === LeadCore.constants.centerRightCorner) {
+				widgetPopupPosition.class = "wv-b-mid-right-pop";
+				widgetPopupPosition.top = "50%";
+				widgetPopupPosition.marginTop = - (visualObjNewLabel.dhVisual.widget_height_nopx / 2) + 'px';
+			}
+			if (visualObjNewLabel.popupMain.place === LeadCore.constants.centerCenterCorner) {
+				widgetPopupPosition.class = "wv-b-mid-mid-pop";
+				widgetPopupPosition.left = "50%";
+				widgetPopupPosition.marginLeft = - (visualObjNewLabel.dhVisual.widget_width_nopx / 2) + 'px'; 
+				widgetPopupPosition.marginTop = - (visualObjNewLabel.dhVisual.widget_height_nopx / 2) + 'px'; 
+			}
+		}
+		setPopupPlacement();
+
+		function prepareFrame() {
+			var divForFrameLabel = document.createElement("div");
+		
+			divForFrameLabel.setAttribute("id", "lgwgDivIframeLabel"+widgetLGWGNewLabelId);
+			divForFrameLabel.setAttribute("class", "lgwg-popup-frame-block wv-b-none-start-pop "+widgetPopupPosition.class);
+			divForFrameLabel.setAttribute("style", "background:none!important;position:fixed!important;margin-left:"+widgetPopupPosition.marginLeft+";margin-top:"+widgetPopupPosition.marginTop+";left:"+widgetPopupPosition.left+";right:"+widgetPopupPosition.right+";top:"+widgetPopupPosition.top+";bottom:"+widgetPopupPosition.bottom+";width:0;height:0;z-index:999999998;");
+			document.getElementsByTagName("body")[0].appendChild(divForFrameLabel);
+
+			if (visualObjNewLabel.popupMain.shadow.enable) {
+				var shadowBlock = document.createElement("div");
+				shadowBlock.setAttribute("id", "LGWGPopupShadow"+widgetLGWGNewLabelId);
+				shadowBlock.setAttribute("class", "lgwg-new-popup-shadow");
+				shadowBlock.setAttribute("style", "background:"+visualObjNewLabel.popupMain.shadow.rgbaColor);
+				document.getElementById("lgwgDivIframeLabel"+widgetLGWGNewLabelId).appendChild(shadowBlock);
+			}
+
+		    var ifrm = document.createElement("iframe");
+		    ifrm.setAttribute("src", "about:blank");
+		    ifrm.setAttribute("frameBorder", "0");
+		    ifrm.setAttribute("id", widgetLGWGNewLabelId);
+		    ifrm.setAttribute("name", "lgwgIframeLabel"+widgetLGWGNewLabelId);
+		    ifrm.setAttribute("style", "display:block!important;position:relative!important;width:100%!important;height:100%!important;border:none!important;z-index:2;background:none!important");
+		    ifrm.addEventListener('load', function () {
+		    	injectCode();
+		    }, false);
+		    document.getElementById("lgwgDivIframeLabel"+widgetLGWGNewLabelId).appendChild(ifrm);
+
+		    function injectCode() {
+				var cssLink = document.createElement("link");
+				cssLink.href = LGWGPathForDevelopmentPopup+ "lgwg_popup_frame.css";
+				cssLink.rel  = "stylesheet";
+				cssLink.type = "text/css";
+
+				ifrm.contentWindow.document.getElementsByTagName("head")[0].appendChild(cssLink);
+				loadSecondaryFuncLGWGPopup();
+			}
+
+			var doc = ifrm.contentWindow.document;
+
+			var jsUrl = LGWGPathForDevelopmentPopup + "lgwg_popup_frame.js";
+
+			doc.open().write('<body onload="' + 
+				'var d = document;var newDScr = d.getElementsByTagName(\'head\')[0].' + 
+				'appendChild(d.createElement(\'script\'));newDScr.src=\''+jsUrl+'\';' +
+				'newDScr.type=\'text/javascript\';newDScr.charset=\'UTF-8\'">');
+			  
+		    doc.close(); //iframe onload event happens
+
+		}
+		//prepareFrame();
+
+		// test
+		if (!document.hidden) {
+			console.log("SHOW POPUP1!");
+			prepareFrame();
+		} else {
+			var LGWGPopupIntervalForStart = setInterval(function () { 
+			  if (!document.hidden) {
+			  	console.log("SHOW POPUP2!");
+			  	clearInterval(LGWGPopupIntervalForStart);
+			  	prepareFrame();
+			  }
+			}, 1000);
+		}
+
+	}
+
+	LGWGNewLabelMainCNTR();
+}
+
+
+
+function loadSecondaryFuncLGWGPopup() {
+
+	if(!popupCenterLGWGSoc) {
+		var popupCenterLGWGSoc = function(url, title, w, h) {
+			// Fixes dual-screen position                         Most browsers      Firefox
+			var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
+			var dualScreenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
+
+			var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+			var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+			var left = ((width / 2) - (w / 2)) + dualScreenLeft;
+			var top = ((height / 3) - (h / 3)) + dualScreenTop;
+
+			var newWindow = window.open(url, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+
+			// Puts focus on the newWindow
+			if (newWindow && newWindow.focus) {
+				newWindow.focus();
+			}
+		};
+	}
+
+	if(!popUpLGWGSoc) {
+		var popUpLGWGSoc = function(link, title) {
+			popupCenterLGWGSoc(link, title, 580, 470);
+		};
+	}
+
+	if(!firstCalc) {
+		var firstCalc;
+	}
+
+	if(!onmessageLGWG) {
+		var onmessageLGWG = function(e) {
+			var data = e.data;
+			if(data.name === "socialAction") {
+				popUpLGWGSoc(data.link, data.title);
+			} else if(data.name === "resize") {
+				e.source.frameElement.parentElement.style.width = data.w + "px";
+				e.source.frameElement.parentElement.style.height = data.h + "px";
+				if (data.mt) {
+					e.source.frameElement.parentElement.style.marginTop = data.mt + "px";
+				}
+			} 
+		};
+	}
+	 
+	if (typeof window.addEventListener !== 'undefined') {
+		window.addEventListener('message', onmessageLGWG);
+	}
+}

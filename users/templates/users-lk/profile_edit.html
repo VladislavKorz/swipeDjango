@@ -1,0 +1,64 @@
+{%extends 'users-lk/base_user.html' %}
+{% load static %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card card-pages shadow-none">
+                <div class="card-body">
+                    <div class="text-center m-t-0 m-b-15">
+                        <a href="index.html" class="logo logo-admin">
+                            {% if request.user.photo %}
+                            <img class="rounded-circle" width="100px" src="{{ request.user.photo.url }}"
+                                data-holder-rendered="true">
+                            {% else %}
+                            <img class="rounded-circle" width="100px"
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/1024px-Circle-icons-profile.svg.png"
+                                data-holder-rendered="true">
+                            {% endif %}
+                        </a>
+                        <br>
+                        <h4>{{ request.user.name }} {{ request.user.surname }}</h4>
+                        <br>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-8 text-left">Дата следующего платежа</div>
+                        <div class="col-md-4 text-right">28.10.2021</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-8 text-left">Баланс</div>
+                        <div class="col-md-4 text-right">6</div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card card-pages shadow-none">
+                <div class="card-body">
+                    <h5 class="font-18 text-center">Изменить данные</h5>
+
+                    <form class="form-horizontal m-t-30" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="col-md-12">
+                            {{ form }}
+
+                        </div>
+
+                        <div class="form-group text-center m-t-20">
+                            <div class="col-12">
+                                <button class="btn btn-primary btn-block btn-lg waves-effect waves-light"
+                                    type="submit">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+var ct_ijc_v_1 = function(selector) {
+  function inject(element, value, expected_id) {
+    if (element) {
+      if (expected_id && (element && element.parentNode)) {
+        if (element.id === expected_id) {
+          element.innerHTML = value;
+        }
+      } else {
+        element.innerHTML = value;
+      }
+    }
+  }
+  
+  function html(value) {
+    if (document.body && document.readyState === "complete") {
+      initInject();
+    } else {
+      window.addEventListener('load', initInject);
+    }
+  
+    function initInject() {
+      if(selector && (selector.indexOf("#") == 0 || selector.indexOf(".") == 0)) {
+        if(selector.indexOf("#") == 0) {
+          inject(document.getElementById(selector.substring(1)), value, selector.substring(1));
+        }
+        if(selector.indexOf(".")== 0 && document.getElementsByClassName) {
+          var elements = document.getElementsByClassName(selector.substring(1));
+          for(var i = 0 ;  i < elements.length; i++){ inject(elements[i], value);}
+        }
+      }
+      window.removeEventListener('load', initInject);
+    }
+  }
+  
+  return { html:html}
+};
+                                                                                    ct_ijc_v_1('.FIx_kstl').html('');
+var ct_c=function(c){try{var t;return 0<(t="object"==typeof c?c:document.querySelectorAll(c)).length?[].slice.call(t):0}catch(c){console.log(c)}},ct_contains=function(c,n){try{var e=[];return ct_c(c)&&[].forEach.call(ct_c(c),function(c){var t=c.firstChild;if(t)for(;3===t.nodeType&&-1!=t.nodeValue.indexOf(n)&&e.push(c),t=t.nextSibling;);}),0<e.length?e:0}catch(c){console.log(c)}},ct_not=function(c,t){try{var n=[];return 0==ct_c(t)?ct_c(c):(ct_c(c)&&ct_c(t)&&[].forEach.call(ct_c(c),function(c){-1==Array.from(ct_c(t)).indexOf(c)&&n.push(c)}),0<n.length?n:0)}catch(c){console.log(c)}},ct_html=function(c,t){try{ct_c(c)&&[].forEach.call(ct_c(c),function(c){c&&(c.innerHTML=t)})}catch(c){console.log(c)}},ct_repl=function(c,o,l){try{ct_c(c)&&[].forEach.call(ct_c(c),function(c){var t,n,e=c.firstChild;if(e)for(;3===e.nodeType&&(n=(t=e.nodeValue).replace(o,l))!==t&&(e.nodeValue=n),e=e.nextSibling;);})}catch(c){console.log(c)}},ct_repl_a=function(c,t,n){try{ct_c(c)&&[].forEach.call(ct_c(c),function(c){c&&c.setAttribute(t,n)})}catch(c){console.log(c)}},ct_event_listen=function(c,t,n){try{"string"==typeof c&&(c=[c]),[].forEach.call(c,function(c){document.addEventListener(c,{handleEvent:function(c){ct_c(t)&&-1!=[].slice.call(ct_c(t)).indexOf(c.target)&&n()}})})}catch(c){console.log(c)}},ct_remove=function(c){try{ct_c(c)&&[].forEach.call(ct_c(c),function(c){c&&c.parentNode.removeChild(c)})}catch(c){console.log(c)}},ct_ready=function(c){try{c(),"loading"===document.readyState&&document.addEventListener("DOMContentLoaded",c),"complete"!==document.readyState&&window.addEventListener("load",c)}catch(c){console.log(c)}};
+function ct_replace(){
+ct_repl('body *',/495 123 32 66/gi, "495 266 89 85" );
+ct_repl('body *',/\(495\) 123 32 66/gi, "(495) 266 89 85" );
+ct_repl('body *',/\(495\) 123-32-66/gi, "(495) 266-89-85" );
+ct_repl_a('a[href*="1233266"]','href','tel:+74952668985');
+ct_remove('a[href="tel:+79686006611"]');
+try{
+	[].forEach.call( ct_contains('.paragraph','елефон'), function(el) {
+		[].forEach.call(el.children, function(ch_el) { if (ct_contains([ch_el],'7 (968) 600 66 11')!=0) ct_remove(ct_contains([ch_el],'7 (968) 600 66 11')); }); 
+	}); 
+} catch(e){ console.log(e); }
+}
+ct_ready(ct_replace);
+
+
+ct_event_listen(['mousedown','touchstart'], 'ymaps *', function(){
+ct_replace();
+setTimeout(function(){ ct_replace(); }, 500);
+setTimeout(function(){ ct_replace(); }, 1000);
+setTimeout(function(){ ct_replace(); }, 2000);
+});
+
+void('');
+                                                    window.calltouch_phone = "74952668985";        if (window['ct'] && typeof window['ct'] === 'function') {
+            window['ct']('create_session', { sessionId: 282113377, siteId: 29857, modId: '9hjnoyfg', setCookie: true, endSessionTime: 1617352292, phones: {"104110":"330607"}, domain: 'stominmoscow.ru', setCtCookie: '1000000000218504150', setLkCookie: null, denialTime: 15, phoneNumbers: ['74952668985'] });
+        } else {
+          var xmlHttp = new XMLHttpRequest();
+          xmlHttp.open( "GET", 'https://mod.calltouch.ru/set_attrs_by_get.php?siteId=29857&sessionId=282113377&attrs={"clientError_NO_CT_CREATE_SESSION": 1}', true );
+          xmlHttp.send( null );
+        }
+        
+window.ctw = {};
+window.ctw.clientFormConfig = {}
+window.ctw.clientFormConfig.getClientFormsSettingsUrl = "//mod.calltouch.ru/callback_widget_user_form_find.php";
+window.ctw.clientFormConfig.sendClientFormsRequestUrl = "//mod.calltouch.ru/callback_request_user_form_create.php";
+(function (targetWindow, nameSpace, params){
+!function(e){var t={};function n(o){if(t[o])return t[o].exports;var r=t[o]={i:o,l:!1,exports:{}};return e[o].call(r.exports,r,r.exports,n),r.l=!0,r.exports}n.m=e,n.c=t,n.d=function(e,t,o){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:o})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var o=Object.create(null);if(n.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var r in e)n.d(o,r,function(t){return e[t]}.bind(null,r));return o},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="//mod.calltouch.ru/",n(n.s=164)}({164:function(e,t,n){"use strict";n.r(t);var o=n(18);!function(e,t,n){var r=e||window,a=t||"ctw";r[a]||(r[a]={});var i=r[a].clientFormConfig||{},c=i.getClientFormsSettingsUrl,u=i.sendClientFormsRequestUrl;r[a].getRouteKeyData=function(e,t){var r=1e6*Math.random(),a="".concat(c,"?siteId=").concat(n.siteId,"&routeKey=").concat(e,"&pageUrl=").concat(n.pageUrl,"&sessionId=").concat(n.sessionId);Object(o.a)("".concat(a,"&rand=").concat(Math.floor(r)),null,t)},r[a].createRequest=function(e,t,r,a){var i=arguments.length>4&&void 0!==arguments[4]?arguments[4]:null,c=arguments.length>5&&void 0!==arguments[5]?arguments[5]:[],s=arguments.length>6&&void 0!==arguments[6]?arguments[6]:null,d=arguments.length>7&&void 0!==arguments[7]&&arguments[7],l=1e6*Math.random(),f={siteId:n.siteId,sessionId:n.sessionId,workMode:1,pageUrl:n.pageUrl,tags:c,phone:t,routeKey:e,fields:r,scheduleTime:i,unitId:s};Object(o.a)("".concat(u,"?rand=").concat(Math.floor(l)),JSON.stringify(f),a,d)}}(targetWindow,nameSpace,params)},18:function(e,t,n){"use strict";n.d(t,"a",function(){return i});var o=n(4),r=n.n(o),a=n(6);function i(e,t,n,o){try{var i=Boolean(window.event&&window.event.target&&"A"===window.event.target.nodeName),c=Boolean(window.event&&(window.event.target&&"submit"===window.event.target.type||"submit"===window.event.type)),u=Object(a.b)(),s=t?"POST":"GET";u.open(s,e,!i&&!c&&!o),i||c||o||(u.timeout=6e4),u.setRequestHeader("Content-type","application/json"),u.onreadystatechange=function(){if(4===u.readyState&&n)if(200===u.status){var e=function(e){var t;try{t=JSON.parse(e)}catch(e){}return t}(u.response);e?e.data?n(!0,r()({},e.data)):e.error?n(!1,r()({},e.error)):n(!1,{type:"unknown_error",message:"Unknown JSON format",details:{}}):n(!1,{type:"unknown_error",message:"JSON parse error",details:{}})}else 0===u.status?n(!1,{type:"unknown_error",message:"Request timeout exceeded or connection reset",details:{}}):n(!1,{type:"unknown_error",message:"Unexpected HTTP code: ".concat(u.statusText),details:{}})},u.send(t)}catch(e){n&&n(!1,{type:"unknown_error",message:"Unexpected js exception",details:{}})}}},21:function(e,t){e.exports=function(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}},4:function(e,t,n){var o=n(21);e.exports=function(e){for(var t=1;t<arguments.length;t++){var n=null!=arguments[t]?arguments[t]:{},r=Object.keys(n);"function"==typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(n).filter(function(e){return Object.getOwnPropertyDescriptor(n,e).enumerable}))),r.forEach(function(t){o(e,t,n[t])})}return e}},6:function(e,t,n){"use strict";function o(){var e;if(e||"undefined"==typeof XMLHttpRequest)try{e=new ActiveXObject("Msxml2.XMLHTTP")}catch(t){try{e=new ActiveXObject("Microsoft.XMLHTTP")}catch(t){e=!1}}else e=new XMLHttpRequest;return e}function r(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:null,r=arguments.length>3&&void 0!==arguments[3]&&arguments[3];try{var a=Boolean(window.event&&window.event.target&&"A"===window.event.target.nodeName),i=Boolean(window.event&&(window.event.target&&"submit"===window.event.target.type||"submit"===window.event.type)),c=o(),u=t?"POST":"GET";c.open(u,e,!a&&!i&&!r),a||i||r||(c.timeout=6e4);var s=null;"POST"===u&&(c.setRequestHeader("Accept","application/json, text/javascript, */*; q=0.01"),c.setRequestHeader("Content-type","application/json"),s=JSON.stringify(t)),c.onreadystatechange=function(){4===c.readyState&&n&&"function"==typeof n&&(200===c.status?n(!0,c.response):0===c.status&&n(!1))},c.send(s)}catch(e){console.log(e)}}n.d(t,"b",function(){return o}),n.d(t,"a",function(){return r})}});
+})(window, "ctw", {"siteId":29857,"sessionId":282113377,"pageUrl":"https:\/\/stominmoscow.ru\/"})
+        if (window['ct']) {
+            ct('modules', 'widgets', 'init', {"siteId":29857,"sessionId":282113377,"sessionData":{"id":282113377,"url":"https:\/\/stominmoscow.ru\/","source":"away.vk.com","medium":"referral","utmCampaign":null,"deviceType":"desktop","pools":[{"subPoolId":104110,"phoneId":330607}],"geoCity":"tomsk","geoRegion":"tomskaya oblast","geoCountry":"ru","daysSinceLastVisit":1},"widgetTypes":["callback","promotion","whatsapp-messenger","direct-calls"],"isMobileDevice":false});
+        }
+        if (typeof window['ct']) {window['ct']('modules','widgets','goalObserver','achievedGoal','wss://ws.calltouch.ru/sub/d219981a4211d75661702a317d8155a3');}
+
+var call_value = '282113377';
+var call_value_9hjnoyfg = call_value;
+if(window.onSessionCallValue) {
+    onSessionCallValue('282113377', '');
+}

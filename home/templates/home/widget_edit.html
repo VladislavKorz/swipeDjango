@@ -1,0 +1,145 @@
+{%extends 'users-lk/base_user.html' %}
+{% load static %}
+{% block head %}
+
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<style>
+    .helptext {
+        display: block;
+        margin-top: -20px;
+        margin-bottom: 7px;
+    }
+
+    label {
+        margin-bottom: 0.3rem;
+        margin-top: 0.6rem;
+    }
+</style>
+{% endblock %}
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card card-pages shadow-none">
+                <div class="card-body">
+                    {% if widget %}
+                    <div class="row text-center m-b-15">
+                        <a href="{% url 'home-PreviewWidget' key=widget.key %}"
+                            class="btn-block btn-primary waves-effect waves-light btn-lg ">Смотреть демо</a>
+                    </div>
+                    <div class="row text-center m-b-15">
+                        <div class="col">
+                            <img id='widgetPreviewImage' src="{{ widget.get_absolute_image }}" alt="" width='100%'>
+                        </div>
+                    </div>
+                    <div class="row text-center m-b-15">
+                        <div class="col">
+                            {% if widget.imageCanvaID != '' %}
+                            <span data-on-design-publish="onDesignPublishCallback" data-design-id="{{ widget.imageCanvaID }}"
+                                data-api-key="pLSLQuq2kGVpcg2t8Kg1BNWJ" class="canva-design-button"
+                                style="display:none;">Изменить картинку виджета в Canva</span>
+                            {% else %}
+                            <span  data-design-type="InstagramStory" data-on-design-publish="onDesignPublishCallback" 
+                                data-api-key="pLSLQuq2kGVpcg2t8Kg1BNWJ" class="canva-design-button"
+                                style="display:none;">Создать картинку виджета в Canva</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h4 class="mt-0 header-title">Статистика виджета</h4>
+                            <ul class="list-inline widget-chart m-t-20 m-b-15 text-center">
+                                <li class="list-inline-item">
+                                    <h5>{{ widget.statick.clickUP }}</h5>
+                                    <p class="text-muted">Переходов</p>
+                                </li>
+                                <li class="list-inline-item">
+                                    <h5>{{ widget.statick.clickDown }}</h5>
+                                    <p class="text-muted">Закрытий</p>
+                                </li>
+                                <li class="list-inline-item">
+                                    <h5>{{ widget.statick.show }}</h5>
+                                    <p class="text-muted">Открытий</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col text-left">Статус</div>
+                        <div class="col text-right">{{ widget.get_status }}</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col text-left">Ключ</div>
+                        <div class="col text-right">{{ widget.key }}</div>
+                    </div>
+                    {% else %}
+                    <h5 class="font-18 text-center">Создайте виджет</h5>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card card-pages shadow-none">
+                <div class="card-body">
+                    <h5 class="font-18 text-center">Изменить виджет</h5>
+
+                    <form class="form-horizontal m-t-30" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="col-md-12">
+                            {{ form }}
+                        </div>
+
+                        <div class="form-group text-center m-t-20">
+                            <div class="col-12">
+                                <button class="btn btn-success btn-block btn-lg waves-effect waves-light"
+                                    type="submit">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+
+
+
+<!-- DAEdKquN-0g -->
+<script>
+    (function (c, a, n) {
+        var w = c.createElement(a), s = c.getElementsByTagName(a)[0];
+        w.src = n; s.parentNode.insertBefore(w, s);
+    })(document, 'script', 'https://sdk.canva.com/designbutton/v2/api.js');
+
+// Экспорт канва
+    function onDesignPublishCallback(options) {
+        let exportUrl = options.exportUrl;
+        let designId = options.designId;
+        $.ajax({
+                type: "POST",
+                url: "{% url 'canvaWidgetSetImageAjax' %}",
+                dataType: "html", //формат данных
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    exportUrl: exportUrl,
+                    designId: designId,
+                    widgetId: '{{ widget.pk }}',
+                },
+                success: function (data) {
+                    data = JSON.parse(data);
+                    if (data['status'] == 'OK'){
+                        let newImageCanva = document.getElementById("widgetPreviewImage");
+                        newImageCanva.setAttribute('src', data['imgUrl']);
+                    } else if (data['status'] == 'error'){
+                        alert(msg);
+                    };
+            }});
+        };
+</script>
+
+{% endblock %}

@@ -1,0 +1,723 @@
+{% load qr_code %}
+{% load static %}
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}" />
+    <meta name="keywords" content="{{ keywords }}">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- Mobile Specific Metas-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Bootstrap-->
+    {% bootstrap_css %}
+    {% bootstrap_javascript jquery='full' %}
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/dependencyLibs/inputmask.dependencyLib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.min.js"></script>
+
+
+    <link rel="stylesheet" href="{% static 'css/effects.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    {% block header %}
+    {% endblock %}
+</head>
+
+<body>
+    <div class="container-fluid p-md-5 "
+        style="background-image: url({% static 'home/image/fon.png' %}); min-height: 700px; height: 100vh; background-size: cover; background-repeat: no-repeat; background-position: center center; background-attachment: scroll;">
+        <div class="row align-items-center">
+            <div class="col-md-1"></div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12 head-p">
+                        <img src="{% static 'home/image/logo.png' %}" alt="" width="38%" style="max-width:260px;">
+                    </div>
+                    <div class="col-md-12 head-p">
+                        <h1 class="title-head">
+                            УВЕЛИЧЬТЕ КОНВЕРСИЮ ВАШЕЙ МОБИЛЬНОЙ ВЕРСИИ САЙТА В 5 РАЗ С НОВЫМ ВИДЖЕТОМ SWIPEME.
+                        </h1>
+                        <p class="title-izi">
+                            ВСЁ ПРОСТО! СМАХНИ ВВЕРХ, ПОЛУЧИ СКИДКУ
+                        </p>
+                    </div>
+                    <div class="col-md-12 head-p text-center ">
+                        <div class="row">
+                            {% if not request.user.is_authenticated %}
+                            <div class="col-md-6">
+                                <a class="btn btn-lead" href="#rec325500585">Попробовать виджет
+                                    бесплатно </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a class="btn  btn-login" href="#" data-toggle="modal"
+                                    data-target="#LogInForm">Авторизация</a>
+                            </div>
+
+                            {% else %}
+                            <div class="col-md-6">
+                                <a class="btn-lead" href="{% url 'users-lk' %}">Перейти в
+                                    личный кабинет </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a class="btn-login" href="{% url 'users-logout' %}" data-toggle="modal"
+                                    data-target="#LogInForm">Выйти</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-5 d-none d-md-block">
+                <img src="{% static 'home/image/phone.png' %}" width="100%">
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{% static 'home/image/phone_about.png' %}" alt="" width="100%" style="max-width:310px;">
+            </div>
+            <div class="col-md-6">
+                <h3 class="about_title">Виджет Swipeme</h3>
+                <p class="about_description">
+                    Это удобный во всех смыслах виджет, специально для <b>мобильных версий сайтов</b>, главным принципом
+                    работы которого является свайп. <b>Ловец лидов</b> представляет собой приятный и не раздражающий
+                    эффект, повышая конверсию вашего сайта за счет появления виджета с вашим <b>уникальным
+                        предложением</b> на экране устройства пользователя, призывая его просто смахнуть экран вверх
+                    <b>( как stories в instagram )</b>
+                    и получить скидку, акцию или промокод в мессенджере!
+                </p>
+                <p class="about_description">
+                    Вы в свою очередь получаете <b>горячего клиента</b> и возможность <b>собрать базу</b> на которую
+                    повторно сможете продавать через мессенджеры.
+                </p>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-12 col-md-11 order-5">
+                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"
+                            style="background-color: #c7c7c7;">
+                        </li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="1"
+                            style="background-color: #c7c7c7;"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="2"
+                            style="background-color: #c7c7c7;"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="{% static 'home/image/slider-image/111.jpg' %}" class="d-block w-100 mb-3"
+                                alt="...">
+                            <div class="slider_text">
+                                <hr>
+                                <h3 class="slider_title">Мобильный трафик преобладает</h3>
+                                <p class="slider_description">
+                                    В 2020 году доля мобильного трафика в сети преобладает над всеми альтернативными
+                                    способами выхода в сеть. На сегодня она составляет 76% от общей массы. Когда люди
+                                    ищут
+                                    информацию о бизнесе через мобильную сеть – 71% пользователей контактирует с
+                                    бизнесом в
+                                    течении 24 часов. Удобный способ взаимодействия Swipeme способствует мгновенному
+                                    принятию решения.
+
+                                </p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{% static 'home/image/slider-image/222.jpg' %}" class="d-block w-100 mb-3"
+                                alt="...">
+                            <div class="slider_text">
+                                <hr>
+                                <h3 class="slider_title">Swipeme</h3>
+                                <p class="slider_description">
+                                    Наш виджет — это не страшные поп-апы, которые выскакивают на экране смартфона в
+                                    самый
+                                    неподходящий момент. И не нечто подобное "Давайте мы вам перезвоним за 10 секунд!".
+                                    Только Вы сами с помощью простейших настроек будете определять уместность появления
+                                    ловца лидов на конкретной странице Вашего сайта в заданный отрезок времени и с
+                                    указанной
+                                    Вами временной задержкой.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{% static 'home/image/slider-image/333.jpeg' %}" class="d-block w-100 mb-3"
+                                alt="...">
+                            <div class="slider_text">
+                                <hr>
+                                <h3 class="slider_title">Кейс барбершопа</h3>
+                                <p class="slider_description">
+                                    Один из кейсов. Конверсия в заявку барбершопа «ZEUS» оставляла желать лучшего. При
+                                    использовании виджета 1 месяц, с органическим трафиком на сайте — было сделано 94
+                                    свайпов, лишь 12 из которых не были с конвертированы в диалог. 82 диалога
+                                    состоялось, из
+                                    которых 80 превратились в сделку. При среднем чеке барбершопа в 1200 руб. данная
+                                    методика принесла салону 96000 руб. прибыли.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col order-1 d-none d-md-block">
+                <a class="carousel-control-prev demo-slider" href="#carouselExampleIndicators" role="button"
+                    data-slide="prev">
+                    <div class="t-slds__arrow_body t-slds__arrow_body-left" style="width: 9px;">
+                        <svg style="display: block" viewBox="0 0 9.3 17" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <desc>Left</desc>
+                            <polyline fill="none" stroke="#000000" stroke-linejoin="butt" stroke-linecap="butt"
+                                stroke-width="1" points="0.5,0.5 8.5,8.5 0.5,16.5"></polyline>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+            <div class="col order-12 d-none d-md-block">
+                <a class="carousel-control-next demo-slider" href="#carouselExampleIndicators" role="button"
+                    data-slide="next">
+                    <div class="t-slds__arrow_body t-slds__arrow_body-left" style="width: 9px;">
+                        <svg style="display: block" viewBox="0 0 9.3 17" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <desc>Left</desc>
+                            <polyline fill="none" stroke="#000000" stroke-linejoin="butt" stroke-linecap="butt"
+                                stroke-width="1" points="0.5,0.5 8.5,8.5 0.5,16.5"></polyline>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 class="about_title">Примеры виджетов</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col p-0 demo-img">
+                <a href="http://sochistroydom.smrtp.ru/" class="demo-img hover ehover13" target="_blank">
+                    <img class="" src="{% static 'home/image/demo/demo_stom.jpeg' %}" width="100%" alt="">
+                    <div class="overlay">
+                        <img src="{% qr_url_from_text 'http://sochistroydom.smrtp.ru/' %}" alt="Виджет в стоматологии"
+                            class="qr_image">
+                        <h2>Виджет в стоматологии</h2>
+                        <p>Просканируй QR-код</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col p-0 demo-img">
+                <a href="http://sochistroydom.smrtp.ru/" class="demo-img hover ehover13" target="_blank">
+                    <img class="" src="{% static 'home/image/demo/demo_travel.jpeg' %}" width="100%" alt="">
+                    <div class="overlay">
+                        <img src="{% qr_url_from_text 'http://sochistroydom.smrtp.ru/' %}" alt="Виджет в путешествиях"
+                            class="qr_image">
+                        <h2>Виджет в путешествиях</h2>
+                        <p>Просканируй QR-код</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col p-0">
+                <a href="http://sochistroydom.smrtp.ru/" class="demo-img hover ehover13" target="_blank">
+                    <img class="" src="{% static 'home/image/demo/demo_home.jpeg' %}" width="100%" alt="">
+                    <div class="overlay">
+                        <img src="{% qr_url_from_text 'http://sochistroydom.smrtp.ru/' %}" alt="Виджет в строительстве"
+                            class="qr_image">
+                        <h2>Виджет в строительстве</h2>
+                        <p>Просканируй QR-код</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-12 col-md-8">
+                <form id="createWidget" method="post">
+                    {% csrf_token %}
+                    <div class="row mt-5">
+                        <div class="col-md-12 text-center mb-3">
+                            <h3 class="about_title pb-0 text-uppercase">ONLINE КОНСТРУКТОР ВИДЖЕТА</h3>
+                            <p class="about_description">
+                                Придумай оффер и собери виджет за пару кликов
+                                <br>
+                                ( Бесплатный период 7 дней! )
+                                <br>
+                            </p>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: 10%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"
+                                    id='progressWidget'>1/7</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-3" id='step1_domainInput'>
+                            <p class="stepWidget">
+                                <span>ШАГ 1:</span> ВВЕДИТЕ ДОМЕН ВАШЕГО САЙТА.<br>
+                                <input class="form-control form-control-lg" name="domain" type="text"
+                                    placeholder="example.com" id='domainInput' required>
+                                <b class="invalid-feedback">Поле не может быть пустым</b>
+                            </p>
+                        </div>
+                        <div class="col-md-12 mt-3 d-none" id='step2_imgGenerator'>
+                            <p class="stepWidget">
+                                <span>ШАГ 2:</span> ВВЕДИТЕ ЛЮБОЕ СЛОВО ПО ВАШЕЙ НИШЕ И ВЫБЕРИТЕ
+                                КАРТИНКУ.<br>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input class="form-control form-control-lg" type="text" id="imageWord"
+                                        placeholder="ПИЦЦА" onchange="findImage()">
+                                    <div class="invalid-feedback">
+                                        Поле не может быть пустым или не выбрана картинка
+                                    </div>
+                                    <input type="text" name="imageUrl" class="d-none" id="imageUrl">
+                                </div>
+                            </div>
+                            </p>
+                            <div class="container-fluid">
+                                <div id="step2img" class="row">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-3 d-none" id='step3_offerInput'>
+                            <p class="stepWidget">
+                                <span>ШАГ 3:</span> ВВЕДИТЕ ТЕКСТ ДЛЯ ОФФЕРА.<br>
+                                <input class="form-control form-control-lg" name="keyWordsOffer" id="keyWordsOfferId"
+                                    type="text" placeholder="Скидка 30% на 2ю пиццу">
+                            <div class="invalid-feedback">Поле не может быть пустым</div>
+                            </p>
+                        </div>
+                        <div class="col-md-12 mt-3 d-none" id='step5_messengerSelected'>
+                            <p class="stepWidget">
+                                <span>ШАГ 4:</span> ВЫБЕРЕТЕ МЕССЕНДЖЕР.<br>
+                            <div class="row 4image">
+                                <div class="col text-center step4image" id='step4imageWhatsApp'>
+                                    <img src="{% static 'home/image/social-icons/whatsapp.png' %}" alt="">
+                                </div>
+                                <div class="col text-center step4image" id='step4imageTelegram'>
+                                    <img src="{% static 'home/image/social-icons/telegram.png' %}" alt="">
+                                </div>
+                                <div class="col text-center step4image" id='step4imageVk'>
+                                    <img src="{% static 'home/image/social-icons/vk.png' %}" alt="">
+                                </div>
+                                <div class="col text-center step4image" id='step4imageFacebook'>
+                                    <img src="{% static 'home/image/social-icons/facebook.png' %}" alt="">
+                                </div>
+                                <div class="col text-center step4image" id='step4imagePhone'>
+                                    <img src="{% static 'home/image/social-icons/calls.png' %}" alt="">
+                                </div>
+                                <div class="col text-center step4image" id='step4imageUrl'>
+                                    <img src="{% static 'home/image/social-icons/zemlya.png' %}" alt="">
+                                </div>
+                                <input type="text" name="msgUrl" class="d-none" id="msgUrl">
+                                <div class="invalid-feedback">Поле не может быть пустым</div>
+                            </div>
+                            </p>
+                            <p class="stepWidget" id="stepWidget5-title">
+                            </p>
+                        </div>
+                        <div class="col-md-12 mt-3 d-none" id='step6_workTest'>
+                            <p class="stepWidget">
+                                <span>ШАГ 5:</span> ПРОВЕРЬТЕ РАБОТУ ВИДЖЕТА И СГЕНЕРИРУЙТЕ ГОТОВЫЙ КОД.<br>
+                            <div class="row align-items-center text-center">
+                                <div class="col-md-7 d-md-none">
+                                    <a id="widgetDemoUrl" href="" target="_blank"> Посмотреть демонстрацию
+                                        виджета </a>
+                                </div>
+                                <div class="col-md-12 d-none d-md-block">
+                                    <img id="widgetDemoQr" src="" alt="qr code">
+                                </div>
+                            </div>
+                            <input type="text" class="form-control-lg d-none" value='next'>
+                            </p>
+                        </div>
+                        <div class="col-md-12 mt-3 d-none" id='step7_workCode'>
+                            <p class="stepWidget">
+                                <span>ШАГ 6:</span> ОСТАВЬТЕ СВОЙ EMAIL НА НЕГО МЫ ВЫШЛЕМ ГОТОВЫЙ КОД И<br>
+                                ДОСТУП К СТАТИСТИКИ.<br>
+
+                                <input type="email" name="inputEmailLead" class="form-control form-control-lg"
+                                    placeholder="name@mail.ru">
+                            <div class="invalid-feedback">Поле не может быть пустым</div>
+                            </p>
+                        </div>
+                        <div class="col-md-12 mt-3 d-none" id='step8_Finish'>
+                            <p class="stepWidget">
+                                Все готово! Осталось только подключить виджет Вам на сайт!<br>
+
+                            </p>
+                            <div class="code-group">
+                                <textarea class="form-control code-copy" id="codeTextAreaID" rows="6"
+                                    value='Код генерируется... Пожалуйста, подождите!'
+                                    style="border: none;background-color:#5aaaff2b;">Код генерируется... Пожалуйста, подождите!</textarea>
+
+                                <button type="button" class="btn btn-link btn-copy-code" title=""
+                                    data-original-title="Копировать в буфер обмена"
+                                    onclick="funCopy();">Копировать</button>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-3 text-center">
+                            <button type="button" class="btn btn-lg btn-primary" id='backStepWidget'
+                                onclick="StepFunc('back');" disabled>Назад</button>
+                            <button type="button" class="btn btn-lg btn-primary" id='nextStepWidget' name='nextStep'
+                                onclick="StepFunc('next');">Следующий шаг</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <br><br><br>
+
+    <div class="container-fluid bg-feed">
+        <div class="row justify-content-center">
+            <div class="col-12 text-center">
+                <h3 class="about_title">Отзывы</h3>
+            </div>
+            <div class="col-12 col-md-7 order-5">
+                <div id="carouselExampleIndicators2" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-target="#carouselExampleIndicators2" data-slide-to="0" class="active"
+                            style="background-color: #c7c7c7;">
+                        </li>
+                        <li data-target="#carouselExampleIndicators2" data-slide-to="1"
+                            style="background-color: #c7c7c7;"></li>
+                        <li data-target="#carouselExampleIndicators2" data-slide-to="2"
+                            style="background-color: #c7c7c7;"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="slider_feedback">
+                                <div class="row">
+                                    <div class="col-md-2 col-12 text-center">
+                                        <img src="{% static 'home/image/feedback/Sarah.jpg' %}" width="100px"
+                                            class="rounded-circle">
+                                    </div>
+                                    <div class="col-md-10 col-12">
+                                        <p class="slider_description">
+                                            The principal element of Suprematism in painting, as in architecture, is its
+                                            liberation from all social or materialist tendencies. Through Suprematism,
+                                            art comes into its pure and unpolluted form.
+                                            <span>
+                                                <b>Sarah Lewin</b><br>
+                                                Project manager
+                                            </span>
+                                            <br>
+                                            <br>
+                                            <br>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="slider_feedback">
+                                <div class="row">
+                                    <div class="col-md-2 col-12 text-center">
+                                        <img src="{% static 'home/image/feedback/Samuel.jpg' %}" width="100px"
+                                            class="rounded-circle">
+                                    </div>
+                                    <div class="col-md-10 col-12">
+                                        <p class="slider_description">
+                                            I think if you do something and it turns out pretty good, then you should go
+                                            do something else wonderful, not dwell on it for too long.
+                                            <span>
+                                                <b>Samuel Willson</b><br>
+                                                Creative director in DD agency
+                                            </span>
+                                            <br>
+                                            <br>
+                                            <br>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="slider_feedback">
+                                <div class="row">
+                                    <div class="col-md-2 col-12 text-center">
+                                        <img src="{% static 'home/image/feedback/Alex.jpg' %}" width="100px"
+                                            class="rounded-circle">
+                                    </div>
+                                    <div class="col-md-10 col-12">
+                                        <p class="slider_description">
+                                            You can't connect the dots looking forward, you can only connect them
+                                            looking backwards.
+                                            <span>
+                                                <b>Alex Larkins</b><br>
+                                                Founder of Pic Pen studio
+                                            </span>
+                                            <br>
+                                            <br>
+                                            <br>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1 order-1 d-none d-md-block">
+                <a class="carousel-control-prev" href="#carouselExampleIndicators2" role="button" data-slide="prev">
+                    <div class="t-slds__arrow_body t-slds__arrow_body-left" style="width: 9px;">
+                        <svg style="display: block" viewBox="0 0 9.3 17" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <desc>Left</desc>
+                            <polyline fill="none" stroke="#000000" stroke-linejoin="butt" stroke-linecap="butt"
+                                stroke-width="1" points="0.5,0.5 8.5,8.5 0.5,16.5"></polyline>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+            <div class="col-1 order-12 d-none d-md-block">
+                <a class="carousel-control-next" href="#carouselExampleIndicators2" role="button" data-slide="next">
+                    <div class="t-slds__arrow_body t-slds__arrow_body-left" style="width: 9px;">
+                        <svg style="display: block" viewBox="0 0 9.3 17" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <desc>Left</desc>
+                            <polyline fill="none" stroke="#000000" stroke-linejoin="butt" stroke-linecap="butt"
+                                stroke-width="1" points="0.5,0.5 8.5,8.5 0.5,16.5"></polyline>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    </div>
+    <br><br><br>
+
+    <div class="container">
+        <div class="row align-items-end pt-5">
+            <div class="col-md-6">
+                <h3 class="about_title">Контакты</h3>
+                <p class="slider_description">
+                    +7-925-777-2345<br>
+                    Swipeme@mail.ru<br>
+                    Москва, Пресненская наб 8 корп 1<br>
+                    <br>
+                    ИП Коржов В.В.,<br>
+                    ИНН 701716854156,<br>
+                    ОГРН 320703100027669<br>
+                    <br>
+                    <a href="{% url 'politics' %}">Политика конфиденциальности</a>
+                </p>
+
+            </div>
+            <div class="col-md-6">
+                <div class="t-map-lazyload t555__map "
+                    style="height:400px; box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);" data-maplazy-load="false">
+                    <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ae6745eff761899c8464a4bfdf973610a149fdefc836255e5405a6ae37fba702c&amp;width=100%25&amp;height=400&amp;lang=ru_RU&amp;scroll=true"></script>
+                </div>
+            </div>
+        </div>
+    </div>
+<br><br><br><br>
+    <div class="container-fluid mt-5" style="background-color: black; color: white; font-weight: 600;">
+        <div class="row align-items-end p-3">
+            <div class="col-md-12 text-center">
+                <p>
+                    SwipeMe © 2020 - {% now 'Y' %}<br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="inner-telegeram">
+        <a href="https://t.me/vkorzhovv">
+            <img src="https://avatars.mds.yandex.net/get-zen_doc/1583807/pub_5e58cf33baedf81f7d511363_5e58e391f8544a5bec015ab8/scale_1200"
+                width="100%">
+        </a>
+    </div>
+
+    {% if not request.user.is_authenticated %}
+    <!-- Modal -->
+    <div class="modal fade" id="LogInForm" tabindex="-1" role="dialog" aria-labelledby="LogInFormLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <form method="POST" class="form-LogInForm">
+                        {% csrf_token %}
+                        <span class="heading">АВТОРИЗАЦИЯ</span>
+                        <div class="form-group">
+                            {{ Loginform.email }}
+                            <i class="fa fa-user"></i>
+                        </div>
+                        <div class="form-group help">
+                            {{ Loginform.password }}
+                            <i class="fa fa-lock"></i>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" name="loginForm" value="True" class="btn btn-default">ВХОД</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+
+
+
+    <script>
+        function funCopy() {
+            /* Get the text field */
+            var copyText = document.getElementById("codeTextAreaID");
+
+            /* Select the text field */
+            copyText.select();
+
+            /* Copy the text inside the text field */
+            document.execCommand("copy");
+
+            /* Alert the copied text */
+            alert("Код скопирован вставьте его до </body> в коде Вашего сайта");
+        }
+        // Поиск картинки
+        let page = 1;
+        let wordInput = document.getElementById('imageWord');
+        if (screen.width > 1200) {
+            quant = 5;
+        } else if (screen.width > 700) {
+            quant = 4;
+        } else if (screen.width > 508) {
+            quant = 3;
+        } else {
+            quant = 2;
+        }
+        function findImage() {
+            let step2img = document.getElementById("step2img");
+            step2img.innerHTML = '<div class="loader"></div>'
+            $.ajax({
+                type: "POST",
+                url: "{% url 'ajaxImageFind' %}",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    formStat: 'image',
+                    searchKey: wordInput.value,
+                    page: page,
+                    quantity: quant,
+                },
+                success: function (data) {
+                    data = JSON.parse(data)
+                    if (data['type'] == 'image') {
+                        step2img.innerHTML = ' <div class="col-1 order-first step2imgRefresh p-0"><a href="javascript:imgRefresh(0);">‹</a></div> <div class="col-1 order-last step2imgRefresh p-0"><a href="javascript:imgRefresh(1);">›</a></div>'
+                        if (data['len'] == 0) {
+                            step2img.innerHTML = '<h3>Картинки по запросу не найдены, попробуйте ввести другое слово</h3>'
+                        } else {
+                            for (let srcIm in data['image']) {
+                                let divCont = document.createElement('div');
+                                divCont.className = 'col p-0';
+                                let im = document.createElement("img");
+                                im.src = srcIm;
+                                im.alt = wordInput.value;
+                                im.setAttribute("onclick", "step2imgInstClick(this)");
+                                divCont.append(im);
+                                step2img.append(divCont);
+                            };
+                        };
+                    };
+                },
+            });
+        };
+        function imgRefresh(nav) {
+            if (nav) {
+                page++;
+                findImage();
+            } else if (page > 1) {
+                page--;
+                findImage();
+            };
+        };
+
+        // Отправка данных формы
+        let data = null;
+        let key = null;
+        function sendQuestFormWidget(step, value) {
+            let formData = JSON.stringify($("#createWidget").serializeArray());
+            $.ajax({
+                type: "POST",
+                url: "{% url 'homeAjaxViewUrl' %}",
+                dataType: "html", //формат данных
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    formStat: 'leadFormWidget',
+                    key: key,
+                    step: step,
+                    value: value,
+                },
+                success: function (data) {
+                    data = JSON.parse(data)
+                    if (data['type'] == 'leadFormWidget') {
+                        key = data['key'];
+                        console.log('info: ' + data['error']);
+                        if (data['status'] == 'error') {
+                            alert(data['error']);
+                            StepFunc('back');
+                        };
+                        if (step == 2 || step == 3) {
+                            phoneWidget = document.getElementById('userSitesWidget');
+                            el = phoneWidget.querySelector('iframe');
+                            el.srcdoc = data['code'];
+                            phoneWidget.classList.remove('d-none');
+                        };
+                        if (step == 3) {
+                            let urlDemo = document.getElementById('widgetDemoUrl');
+                            let qrDemo = document.getElementById('widgetDemoQr');
+                            urlDemo.href = data['previewUrl'];
+                            qrDemo.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + data['previewUrl'];
+                        };
+                        if (step == 6) {
+                            let step8 = document.querySelector('#step8_Finish');
+                            let taCont8 = document.querySelector('#codeTextAreaID');
+                            taCont8.value = data['code'];
+                            taCont8.innerText = data['code'];
+                        };
+                    };
+                },
+            });
+        };
+        function onError() {
+            alert('что-то не так с iframe');
+        }
+        function sendToLKUser() {
+            document.location.href = "{% url 'users-lk' %}";
+        }
+    </script>
+
+    <script src="{% static 'home/js/inputMsck.js' %}"></script>
+    <script src="{% static 'home/js/phoneViews.js' %}"></script>
+    <script src="{% static 'home/js/imageSelect.js' %}"></script>
+    <script src="{% static 'home/js/main.js' %}"></script>
+    <script src="https://use.fontawesome.com/852d52023a.js"></script>
+</body>
+
+</html>
