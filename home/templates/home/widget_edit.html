@@ -75,6 +75,16 @@
                         <div class="col text-left">Ключ</div>
                         <div class="col text-right">{{ widget.key }}</div>
                     </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col text-left">Активыне ссылки</div>
+                        <div class="col text-right">
+                            {% for url in widget.url_links.all %}
+                            <div class="col text-left">{{ url.get_type }}</div>
+                            <div class="col text-right">{{ url.url }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
                     {% else %}
                     <h5 class="font-18 text-center">Создайте виджет</h5>
                     {% endif %}

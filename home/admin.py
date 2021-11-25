@@ -9,4 +9,6 @@ class testLeadAdmin(admin.ModelAdmin):
 	list_filter = ['dateStart', 'dateStop', 'status']
 	verbose_name_plural = 'Модули'
 
+admin.site.register(urlLead)
+
 admin.site.register(widgetStatistics)

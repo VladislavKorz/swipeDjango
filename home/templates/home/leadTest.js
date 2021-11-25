@@ -54,6 +54,8 @@ function createCanvas() {
     }
     staticSend('open');
 }
+
+
 function closeCanvas() {
     div.innerHTML = '';
     staticSend('close');
@@ -62,7 +64,7 @@ function closeCanvas() {
 // Создание элемента canvas 
 var div = document.getElementById('swipeWrapper-1ieq2r');
 // div.style="position: fixed; z-index: 500; overflow: hidden; top: 0px; left: 0;" Старый
-div.style = "z-index: 999999; width: 100%; height: 100%; position: fixed; top: 0; left: 0; display: flex; align-items: center; align-content: center; justify-content: center";
+div.style = "z-index: 999999999999999999999999999999999999; width: 100%; height: 100%; position: fixed; top: 0; left: 0; display: flex; align-items: center; align-content: center; justify-content: center";
 
 // Создание крестика, что бы закрыть
 var closeCanvasBtn = document.createElement("a");
@@ -146,16 +148,16 @@ function CheckAction() {
         {
             if (d.x > 0) //Если значение больше нуля, значит пользователь двигал пальцем справа налево
             {
-                {% if code.siteUrlLeft %}
+                //{% if code.siteUrlLeft %}
                 document.location.href = "{{ code.siteUrlLeft }}";
-                {% endif %}
+                //{% endif %}
 
             }
             else //Иначе он двигал им слева направо
             {
-                {% if code.siteUrlRight %}
+                //{% if code.siteUrlRight %}
                 document.location.href = "{{ code.siteUrlRight }}";
-                {% endif %}
+                //{% endif %}
             }
         }
     }
@@ -165,19 +167,84 @@ function CheckAction() {
             if (d.y > 0) //Свайп вверх
             {
                 staticSend('swipeUP');
-                document.location.href = urlSwipe;
+                goUrlBank();
+                // document.location.href = urlSwipe;
             }
             else //Свайп вниз
             {
-                {% if code.siteUrlDown != '' %}
+                //{% if code.siteUrlDown != '' %}
                 document.location.href = '{{ code.siteUrlDown }}'
-                {% else %}
+                //{% else %}
                 closeCanvas();
-                {% endif %}
+                //{% endif %}
             }
         }
     }
 
     // console.log(msg); //Выводим сообщение
+
+}
+
+function goUrlBank(){
+    let div_body = document.createElement("div");
+    div_body.style = "width: 100%;height: 100%;background: rgb(225, 225, 225);color: rgb(48, 48, 48);z-index: 100;display: block;position: absolute;text-align: center;font-size: 27px;"
+    div.appendChild(div_body);
+
+    let div_title = document.createElement("div");
+    div_title.style = "padding-bottom: 18px;";
+    div_title.innerHTML = "<img src='http://127.0.0.1:8000/static/home/image/logo.png' style='width: 45%; padding: 12px;'><br>Получи промокод в любом из мессенджеров👇";
+    div_body.appendChild(div_title);
+    
+    
+    let div_wa1 = document.createElement("div");
+    div_wa1.style = "background: #fc0; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; background-color: green; text-align: left; color:white; font-size:16px; padding:15px"
+    div_wa1.innerHTML = "Для получения промокода из WhatshApp нужно будет перейти в мессенджер и отправить заготовленный текст сообщения!"
+    let div_wa1_url = document.createElement("div");
+    div_wa1_url.style = 'text-align: right; font-size: 18px; padding-top: 16px;';
+    div_wa1_url.innerHTML = "<a href='wa.me' style='color: white;'>Перейти</a> <span>›</span>";
+    div_wa1.appendChild(div_wa1_url);
+    
+    let div_wa2 = document.createElement("div");
+    div_wa2.style = "background: #fc0; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; background-color: #0088cc; text-align: left; color:white; font-size:16px; padding:15px"
+    div_wa2.innerHTML = "Для получения промокода из Telegram ...."
+    let div_wa2_url = document.createElement("div");
+    div_wa2_url.style = 'text-align: right; font-size: 18px; padding-top: 16px;';
+    div_wa2_url.innerHTML = "<a href='wa.me' style='color: white;'>Перейти</a> <span>›</span>";
+    div_wa2.appendChild(div_wa2_url);
+    
+    let div_wa3 = document.createElement("div");
+    div_wa3.style = "background: #fc0; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; background-color: #cd486b; text-align: left; color:white; font-size:16px; padding:15px"
+    div_wa3.innerHTML = "Для получения промокода из Instagram... "
+    let div_wa3_url = document.createElement("div");
+    div_wa3_url.style = 'text-align: right; font-size: 18px; padding-top: 16px;';
+    div_wa3_url.innerHTML = "<a href='wa.me' style='color: white;'>Перейти</a> <span>›</span>";
+    div_wa3.appendChild(div_wa3_url);
+    
+    let div_wa4 = document.createElement("div");
+    div_wa4.style = "background: #fc0; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; background-color: #0077ff; text-align: left; color:white; font-size:16px; padding:15px"
+    div_wa4.innerHTML = "Для получения промокода из VK..."
+    let div_wa4_url = document.createElement("div");
+    div_wa4_url.style = 'text-align: right; font-size: 18px; padding-top: 16px;';
+    div_wa4_url.innerHTML = "<a href='wa.me' style='color: white;'>Перейти</a> <span>›</span>";
+    div_wa4.appendChild(div_wa4_url);
+    
+    let div_wa5 = document.createElement("div");
+    div_wa5.style = "background: #fc0; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; background-color: green; text-align: left; color:white; font-size:16px; padding:15px"
+    div_wa5.innerHTML = "Для получения промокода из WhatshApp нужно будет перейти в мессенджер и отправить заготовленный текст сообщения!"
+    let div_wa5_url = document.createElement("div");
+    div_wa5_url.style = 'text-align: right; font-size: 18px; padding-top: 16px;';
+    div_wa5_url.innerHTML = "<a href='wa.me' style='color: white;'>Перейти</a> <span>›</span>";
+    div_wa5.appendChild(div_wa5_url);
+
+    // {% for item in code.url_links.all %}
+    div_body.appendChild(div_wa5);
+    div_body.appendChild(div_wa4);
+    div_body.appendChild(div_wa3);
+    div_body.appendChild(div_wa2);
+    div_body.appendChild(div_wa1);
+
+    // {% endfor %}
+
+    
 
 }

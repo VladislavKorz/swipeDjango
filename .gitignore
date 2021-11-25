@@ -1,3 +1,5 @@
-/migrations/*
 *.pyc
 *.cpyc
+home/migrations/*
+.gitignore
+media/*

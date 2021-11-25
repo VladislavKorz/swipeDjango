@@ -10,8 +10,8 @@ import datetime
 import urllib
 import os
 
-baseUrl = 'http://swipe-me.ru'
-baseUrl1 = 'http://127.0.0.1:8000'
+# baseUrl = 'http://swipe-me.ru'
+baseUrl = 'http://127.0.0.1:8000'
 
 def uniqueKeyGenerator():
     chars = list('.-_abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890')
@@ -88,6 +88,27 @@ class testLead(models.Model):
         verbose_name_plural='Тестовые лиды'
         verbose_name='Тестовый лид'
         ordering=['-dateStart', 'siteUrlBase']
+
+class urlLead(models.Model):
+    TYPE_STATUS_CHOICES = [
+        (0, 'Whatsapp'),
+        (1, 'Telegramm'),
+        (2, 'Instagram'),
+        (3, 'VK'),
+        (4, 'Facebook'),
+        ]
+    lead = models.ForeignKey(testLead, verbose_name="Виджет", on_delete=models.CASCADE, null=True, blank=True, related_name='url_links')
+    url = models.URLField(verbose_name='Ссылка на сайт', max_length=450, default='')
+    type = models.IntegerField(verbose_name='Тип ссылки', choices=TYPE_STATUS_CHOICES, default=0,)
+    status = models.BooleanField("Включена/Выключена", default=True)
+
+    
+    def get_type(self):
+        return self.TYPE_STATUS_CHOICES[self.type][1]
+
+    class Meta:
+        verbose_name_plural='Ссылки для виджетов'
+        verbose_name='Ссылки для виджетов'
 
 
 # REMOTE_ADDR
