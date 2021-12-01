@@ -240,6 +240,20 @@ def DeltedWidget(request, pk):
     widget.delete()
     return redirect('users-lk')
 
+def DeltedLinkWidget(request, pk):
+    link = get_object_or_404(urlLead, pk=pk, lead__user=request.user)
+    link.delete()
+    return redirect('widget-edit', link.lead.pk)
+
+def StatusChangeLinkWidget(request, pk):
+    link = get_object_or_404(urlLead, pk=pk, lead__user=request.user)
+    if link.status:
+        link.status = False
+    else:
+        link.status = True
+    link.save()
+    return redirect('widget-edit', link.lead.pk)
+
 def StatusChangeWidget(request, pk):
     widget = get_object_or_404(testLead, pk=pk, user=request.user)
     if widget.status == 0:

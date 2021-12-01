@@ -103,7 +103,6 @@ class urlLead(models.Model):
     keyWords = models.CharField(verbose_name='Текст оффера', max_length=120, blank=True)
     status = models.BooleanField("Включена/Выключена", default=True)
 
-    
     def get_type(self):
         return self.TYPE_STATUS_CHOICES[self.type][1]
 

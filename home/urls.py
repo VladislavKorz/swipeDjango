@@ -14,6 +14,8 @@ urlpatterns = [
     path('delted/pk<str:pk>/', DeltedWidget, name='home-DeltedWidget'),
     path('css/', codeCss, name='home-swipeKey'),
     path('edit/id<int:pk>', widgetEditView, name='widget-edit'),
-    path('status/id<int:pk>', StatusChangeWidget, name='widget-changeStatus'),
+    path('status/id<int:pk>/', StatusChangeWidget, name='widget-changeStatus'),
+    path('delted-link/id<int:pk>/', DeltedLinkWidget, name='widget-link-delted'),
+    path('status-link/id<int:pk>/', StatusChangeLinkWidget, name='widget-link-changeStatus'),
     path('create', createEditView, name='widget-create'),
 ]
