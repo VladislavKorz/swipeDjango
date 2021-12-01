@@ -1,19 +1,11 @@
-// {% load static %}
-
 let image = new Image();
 image.src = "{{ code.get_absolute_image }}";
-
-let width_small = '30%'
-let height_small = '27%'
-
-
 
 //Растягиваем холст на весь экран при изминении размера
 window.addEventListener("resize", function InitApp() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
-
 let urlSwipe = '{{ code.siteUrlUp }}'
 urlSwipe = urlSwipe.replace(/&amp;/g, '&')
 console.log(urlSwipe)
@@ -24,11 +16,10 @@ if (swipeOpenBtn) {
     swipeOpenBtn.onclick = createCanvas;
 }
 
-
 window.onload = function () {
     if (window.innerWidth <= 760) {
-        setTimeout(createCanvas_min, {{ code.openTime }}* 1000);
-}};
+        setTimeout(createCanvas, {{ code.openTime }}* 1000);
+};};
 
 
 // Функция отправки статистики
@@ -36,10 +27,8 @@ function staticSend(value) {
     let url = ''
     if (value == 'open') {
         url = "{{baseUrl}}{% url 'home-swipeKeyGet' key=code.key params='open' %}";
-    } else if (value == 'open') {
+    } else if (value == 'close') {
         url = "{{baseUrl}}{% url 'home-swipeKeyGet' key=code.key params='close' %}";
-    } else if (value == 'open_site') {
-        url = "{{baseUrl}}{% url 'home-swipeKeyGet' key=code.key params='open_site' %}";
     } else if (value == 'swipeUP') {
         url = "{{baseUrl}}{% url 'home-swipeKeyGet' key=code.key params='swipeUP' %}";
     };
@@ -53,35 +42,9 @@ function staticSend(value) {
 }
 
 // Создание канвас
-function createCanvas_min() {
-    div.style.width = width_small;
-    div.style.height = height_small;
-    div.style.bottom = '30px';
-    div.style.left = '30px';
-    textOffer.style.fontSize = '58%';
-    div.appendChild(canvas);
-    if ('{{ code.keyWords }}'.length > 3) {
-        div.appendChild(textOffer);
-    }
-    staticSend('open_site');
-    if(div.contains(arrowUp)){
-        div.removeChild(arrowUp);
-        div.removeChild(arrowUpText);
-
-    }
-}
-
-
-// Создание канвас
 function createCanvas() {
-    div.style.bottom = '0px';
-    div.style.left = '0px';
-    div.style.width = '100%';
-    div.style.height = '100%';
-    arrowUpText.style.bottom = '5px';
-    textOffer.style.fontSize = '23px';
-    canvas.width = '100%';
-    canvas.height = '100%';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     div.appendChild(canvas);
     div.appendChild(closeCanvasBtn);
     div.appendChild(arrowUp);
@@ -90,18 +53,18 @@ function createCanvas() {
         div.appendChild(textOffer);
     }
     staticSend('open');
-};
+}
 
 
 function closeCanvas() {
-    createCanvas_min();
+    div.innerHTML = '';
     staticSend('close');
-};
+}
 
 // Создание элемента canvas 
 var div = document.getElementById('swipeWrapper-1ieq2r');
-div.style = "z-index: 999999999999999999999999999999999999; background-color:black; bottom:30px; left:30px; position: fixed; display: flex; align-items: center; align-content: center; justify-content: center";
-
+// div.style="position: fixed; z-index: 500; overflow: hidden; top: 0px; left: 0;" Старый
+div.style = "z-index: 999999999999999999999999999999999999; width: 100%; height: 100%; position: fixed; top: 0; left: 0; display: flex; align-items: center; align-content: center; justify-content: center";
 
 // Создание крестика, что бы закрыть
 var closeCanvasBtn = document.createElement("a");
@@ -111,7 +74,7 @@ closeCanvasBtn.href = 'javascript:closeCanvas();';
 
 // Создание надписи
 var textOffer = document.createElement("h3");
-textOffer.style = 'color: white;text-align: center;font-size: 58%;width: 100%;border-top-style: inset;background-color: rgb(0 0 0 / 80%);position: absolute;top: 45%;padding: 12px 0px;margin: auto;font-family: Montserrat, sans-serif;border-bottom-style: inset;border-width: 3px;';
+textOffer.style = 'color: white;text-align: center;font-size: 21px;width: 100%;border-top-style: inset;background-color: rgb(0 0 0 / 80%);position: absolute;top: 45%;padding: 12px 0px;margin: auto;font-family: Montserrat, sans-serif;border-bottom-style: inset;border-width: 3px;';
 textOffer.innerHTML = '{{ code.keyWords }}';
 
 // Создание эллемента свайп вверх и анимации
@@ -130,7 +93,7 @@ const canvas = document.createElement("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 canvas.id = "swipeCanvas-23e9i2ed";
-canvas.style = "background-image: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 45%, rgba(255,255,255,0) 55%), url({{ code.get_absolute_image }}); background-position: center; background-size: cover; width:100%; height:100%;";
+canvas.style = "background-image: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 45%, rgba(255,255,255,0) 55%), url({{ code.get_absolute_image }}); background-position: center; background-size: cover;";
 
 //Чувствительность — количество пикселей, после которого жест будет считаться свайпом
 const sensitivity = 40;
@@ -148,12 +111,6 @@ canvas.addEventListener("touchmove", function (e) { TouchMove(e); }); //Движ
 canvas.addEventListener("touchend", function (e) { TouchEnd(e, "green"); });
 //Отмена касания
 canvas.addEventListener("touchcancel", function (e) { TouchEnd(e, "red"); });
-
-
-if (div) {
-    div.onclick = createCanvas;
-};
-
 
 function TouchStart(e) {
     //Получаем текущую позицию касания
@@ -230,7 +187,7 @@ function CheckAction() {
 
 function goUrlBank(){
     let div_body = document.createElement("div");
-    div_body.style = "overflow: auto; width: 100%;height: 100%;background: rgb(225, 225, 225);color: rgb(48, 48, 48);z-index: 100;display: block;position: absolute;text-align: center;font-size: 27px;"
+    div_body.style = "width: 100%;height: 100%;background: rgb(225, 225, 225);color: rgb(48, 48, 48);z-index: 100;display: block;position: absolute;text-align: center;font-size: 27px;"
     div.appendChild(div_body);
 
     let div_title = document.createElement("div");
@@ -238,42 +195,56 @@ function goUrlBank(){
     div_title.innerHTML = "<img src='http://127.0.0.1:8000/static/home/image/logo.png' style='width: 45%; padding: 12px;'><br>Получи промокод в любом из мессенджеров👇";
     div_body.appendChild(div_title);
     
-    let div_url = [];
-    let div_url_links = [];
+    
+    let div_wa1 = document.createElement("div");
+    div_wa1.style = "background: #fc0; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; background-color: green; text-align: left; color:white; font-size:16px; padding:15px"
+    div_wa1.innerHTML = "Для получения промокода из WhatshApp нужно будет перейти в мессенджер и отправить заготовленный текст сообщения!"
+    let div_wa1_url = document.createElement("div");
+    div_wa1_url.style = 'text-align: right; font-size: 18px; padding-top: 16px;';
+    div_wa1_url.innerHTML = "<a href='wa.me' style='color: white;'>Перейти</a> <span>›</span>";
+    div_wa1.appendChild(div_wa1_url);
+    
+    let div_wa2 = document.createElement("div");
+    div_wa2.style = "background: #fc0; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; background-color: #0088cc; text-align: left; color:white; font-size:16px; padding:15px"
+    div_wa2.innerHTML = "Для получения промокода из Telegram ...."
+    let div_wa2_url = document.createElement("div");
+    div_wa2_url.style = 'text-align: right; font-size: 18px; padding-top: 16px;';
+    div_wa2_url.innerHTML = "<a href='wa.me' style='color: white;'>Перейти</a> <span>›</span>";
+    div_wa2.appendChild(div_wa2_url);
+    
+    let div_wa3 = document.createElement("div");
+    div_wa3.style = "background: #fc0; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; background-color: #cd486b; text-align: left; color:white; font-size:16px; padding:15px"
+    div_wa3.innerHTML = "Для получения промокода из Instagram... "
+    let div_wa3_url = document.createElement("div");
+    div_wa3_url.style = 'text-align: right; font-size: 18px; padding-top: 16px;';
+    div_wa3_url.innerHTML = "<a href='wa.me' style='color: white;'>Перейти</a> <span>›</span>";
+    div_wa3.appendChild(div_wa3_url);
+    
+    let div_wa4 = document.createElement("div");
+    div_wa4.style = "background: #fc0; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; background-color: #0077ff; text-align: left; color:white; font-size:16px; padding:15px"
+    div_wa4.innerHTML = "Для получения промокода из VK..."
+    let div_wa4_url = document.createElement("div");
+    div_wa4_url.style = 'text-align: right; font-size: 18px; padding-top: 16px;';
+    div_wa4_url.innerHTML = "<a href='wa.me' style='color: white;'>Перейти</a> <span>›</span>";
+    div_wa4.appendChild(div_wa4_url);
+    
+    let div_wa5 = document.createElement("div");
+    div_wa5.style = "background: #fc0; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; background-color: green; text-align: left; color:white; font-size:16px; padding:15px"
+    div_wa5.innerHTML = "Для получения промокода из WhatshApp нужно будет перейти в мессенджер и отправить заготовленный текст сообщения!"
+    let div_wa5_url = document.createElement("div");
+    div_wa5_url.style = 'text-align: right; font-size: 18px; padding-top: 16px;';
+    div_wa5_url.innerHTML = "<a href='wa.me' style='color: white;'>Перейти</a> <span>›</span>";
+    div_wa5.appendChild(div_wa5_url);
+
     // {% for item in code.url_links.all %}
+    div_body.appendChild(div_wa5);
+    div_body.appendChild(div_wa4);
+    div_body.appendChild(div_wa3);
+    div_body.appendChild(div_wa2);
+    div_body.appendChild(div_wa1);
 
-    // {% if item.status %}
-    div_url.push(document.createElement("div"));
-    div_url[div_url.length - 1].style = "position: relative; min-height: 137px; text-shadow: 3px 3px 7px rgb(0 0 0); background-size: cover; background-position: center center; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; text-align: left; color:white; font-size:18px; font-weight: 600; padding:15px";
-    // {% if item.type == 0 %}
-    div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/wa.jpg' %}')";
-    // {% elif item.type == 1 %}
-    div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/tg.jpg' %}')";
-    // {% elif item.type == 2 %}
-    div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/inst.jpg' %}')";
-    // {% elif item.type == 3 %}
-    div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/vk.jpg' %}')";
-    // {% elif item.type == 4 %}
-    div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/fb.jpg' %}')";
-    // {% else %}
-    div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/phone.jpg' %}')";
-    // {% endif %}
+    // {% endfor %}
 
-    div_url[div_url.length - 1].innerHTML = "{{ item.keyWords }}";
-    div_url_links.push(document.createElement("div"));
-    div_url_links[div_url_links.length - 1].style = 'font-size: 18px; position: absolute; bottom: 15px; right: 22px;';
-    div_url_links[div_url_links.length - 1].innerHTML = "<a href='{{ item.url }}' style='color: white;'>Перейти</a> <span>›</span>";
-    div_url[div_url.length - 1].appendChild(div_url_links[div_url_links.length - 1]);
-
-    div_body.appendChild(div_url[div_url.length - 1]);
-
-    // {% endif %}   
-    // {% endfor %}   
+    
 
 }

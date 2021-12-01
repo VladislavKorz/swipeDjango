@@ -185,6 +185,7 @@ def codeJs(request, key):
     if code.dateStop > timezone.now():
         if code.status == 0:
             context = {
+                'inst_url': code.url_links.filter(type=2, status=True),
                 'baseUrl': baseUrl,
                 'code': code,
             }

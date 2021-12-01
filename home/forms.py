@@ -1,5 +1,5 @@
 from django import forms
-from .models import testLead
+from .models import testLead, urlLead
 
 
 class leadEmail(forms.Form):
@@ -10,7 +10,18 @@ class leadEmail(forms.Form):
 class WidgetChangeForm(forms.ModelForm):
     class Meta:
         model = testLead
-        fields = ('title','openTime','siteUrlBase','siteUrlUp', 'keyWords', 'image', )
+        fields = ('title','openTime','siteUrlBase', 'keyWords', 'image', )
+
+    def __init__(self, *args, **kwargs):
+        super(WidgetChangeForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
+
+class LinkChangeForm(forms.ModelForm):
+    class Meta:
+        model = urlLead
+        fields = ('url','type','keyWords', 'status', )
 
     def __init__(self, *args, **kwargs):
         super(WidgetChangeForm, self).__init__(*args, **kwargs)

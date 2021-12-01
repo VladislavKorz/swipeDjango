@@ -100,6 +100,7 @@ class urlLead(models.Model):
     lead = models.ForeignKey(testLead, verbose_name="Виджет", on_delete=models.CASCADE, null=True, blank=True, related_name='url_links')
     url = models.URLField(verbose_name='Ссылка на сайт', max_length=450, default='')
     type = models.IntegerField(verbose_name='Тип ссылки', choices=TYPE_STATUS_CHOICES, default=0,)
+    keyWords = models.CharField(verbose_name='Текст оффера', max_length=120, blank=True)
     status = models.BooleanField("Включена/Выключена", default=True)
 
     
