@@ -100,6 +100,10 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+        <div class="col-md-12 mb-5">
+            <div class="card card-pages shadow-none">
                 <div class="card-body">
                     <h5 class="font-18 text-center">Изменить ссылки</h5>
                     <div class="col text-right">
@@ -108,6 +112,7 @@
                               <tr>
                                 <th scope="col">Тип</th>
                                 <th scope="col">Ссылка</th>
+                                <th scope="col"></th>
                                 <th scope="col">Статус</th>
                               </tr>
                             </thead>
@@ -116,9 +121,10 @@
                                 <tr>
                                 <td>{{ url.get_type }}</td>
                                 <td>{{ url.url }}</td>
+                                <td>{{ url.keyWords }}</td>
                                 <td>
-                                    <div>
-                                        <a href="/" class="btn btn-primary btn-sm">
+                                    <div>                                        
+                                        <a data-toggle="modal" data-target="#urlID_{{ url.pk }}" class="btn btn-primary btn-sm">
                                             <i class="fas fa-pencil-alt"></i>
                                         </a>
                                         {% if url.status %}
@@ -141,8 +147,9 @@
                         </table>
                         <div class="row justify-content-md-center">
                             <div class="col-6">
-                                <button class="btn btn-success btn-block btn-lg waves-effect waves-light"
-                                    type="submit">Создать новую ссылку</button>
+                                <button class="btn btn-success btn-block btn-lg waves-effect waves-light" data-toggle="modal" data-target="#urlID_create" >
+                                    Создать новую ссылку
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -153,6 +160,62 @@
 </div>
 <br>
 
+{% for url in widget.url_links.all %}
+    <!-- Modal -->
+    <div class="modal fade" id="urlID_{{ url.pk }}" tabindex="-1" role="dialog" aria-labelledby="urlID_{{ url.pk }}Label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <form method="POST" class="form-urlID_{{ url.pk }}">
+                        {% csrf_token %}
+                        <span class="heading">Изменить ссылку для виджета {{ widget.pk }}</span>
+                        <div class="form-group">
+                            <label for="">Ссылка:</label>
+                            <input type="text"
+                            class="form-control" name="" id="" aria-describedby="helpId" value="{{ url.url }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Оффер:</label>
+                            <input type="text"
+                            class="form-control" name="" id="" aria-describedby="helpId" value="{{ url.keyWords }}">
+                        </div>
+                        </div>
+                        <div class="form-group">
+                            {% comment %} <button type="submit" name="loginForm" value="True" class="btn btn-default">Изменить</button> {% endcomment %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<!-- Modal -->
+<div class="modal fade" id="urlID_create" tabindex="-1" role="dialog" aria-labelledby="urlID_createLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <form method="POST" class="form-urlID_create">
+                    {% csrf_token %}
+                    <span class="heading">Создать ссылку для виджета {{ widget.pk }}</span>
+                    <div class="form-group">
+                        {{ form_link }}
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" name="urlID_create" value="True" class="btn btn-default">Создать</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 

@@ -21,9 +21,9 @@ class WidgetChangeForm(forms.ModelForm):
 class LinkChangeForm(forms.ModelForm):
     class Meta:
         model = urlLead
-        fields = ('url','type','keyWords', 'status', )
+        fields = ('url','type','keyWords', )
 
     def __init__(self, *args, **kwargs):
-        super(WidgetChangeForm, self).__init__(*args, **kwargs)
+        super(LinkChangeForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'

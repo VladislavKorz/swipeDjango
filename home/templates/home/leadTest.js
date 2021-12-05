@@ -3,8 +3,10 @@
 let image = new Image();
 image.src = "{{ code.get_absolute_image }}";
 
-let width_small = '30%'
-let height_small = '27%'
+let width_small = '30%';
+let height_small = '27%';
+
+let canvas_status = '';
 
 
 
@@ -54,12 +56,21 @@ function staticSend(value) {
 
 // Создание канвас
 function createCanvas_min() {
+    canvas_status = 'min'
+    if(div.contains(closeCanvasBtn)){div.removeChild(closeCanvasBtn)};
     div.style.width = width_small;
     div.style.height = height_small;
     div.style.bottom = '30px';
     div.style.left = '30px';
     textOffer.style.fontSize = '58%';
+    div.style.borderRadius = '23px';
+    canvas.style.borderRadius = '23px';
+    canvas.style.borderColor = '#ffffff'; 
+    canvas.style.borderWidth = '5px'; 
+    canvas.style.borderStyle = 'solid';
     div.appendChild(canvas);
+    div.appendChild(closeCanvasBtn_min);
+
     if ('{{ code.keyWords }}'.length > 3) {
         div.appendChild(textOffer);
     }
@@ -70,10 +81,17 @@ function createCanvas_min() {
 
     }
 }
-
+window.onscroll = function () {
+    if (canvas_status=='max') {
+        window.scrollTo(0, 0); 
+    }
+};
 
 // Создание канвас
 function createCanvas() {
+    canvas_status = 'max'
+
+    if(div.contains(closeCanvasBtn_min)){div.removeChild(closeCanvasBtn_min)};
     div.style.bottom = '0px';
     div.style.left = '0px';
     div.style.width = '100%';
@@ -82,6 +100,9 @@ function createCanvas() {
     textOffer.style.fontSize = '23px';
     canvas.width = '100%';
     canvas.height = '100%';
+    div.style.borderRadius = '0px';
+    canvas.style.borderRadius = '0px';
+    canvas.style.borderWidth = '0px'; 
     div.appendChild(canvas);
     div.appendChild(closeCanvasBtn);
     div.appendChild(arrowUp);
@@ -93,19 +114,30 @@ function createCanvas() {
 };
 
 
-function closeCanvas() {
-    createCanvas_min();
-    staticSend('close');
+function closeCanvas(method) {
+    if (method == "all"){
+        div.style.display = "None"
+        staticSend('close_all');
+    } else {
+        createCanvas_min();
+        staticSend('close');
+    }
 };
 
 // Создание элемента canvas 
 var div = document.getElementById('swipeWrapper-1ieq2r');
-div.style = "z-index: 999999999999999999999999999999999999; background-color:black; bottom:30px; left:30px; position: fixed; display: flex; align-items: center; align-content: center; justify-content: center";
+div.style = "z-index: 999999999999999999999999999999999999; background-color:white; bottom:30px; left:30px; position: fixed; display: flex; align-items: center; align-content: center; justify-content: center";
 
+
+// Создание крестика, что бы закрыть маленькое окно
+var closeCanvasBtn_min = document.createElement("a");
+closeCanvasBtn_min.style = 'position: absolute; right: 20px; top: 17px; width: 15%; text-decoration: none;';
+closeCanvasBtn_min.innerHTML = '<svg id="svg" version="1.1" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ><g id="svgg"><path id="path0" d="M395.309 188.000 C 395.309 188.990,395.387 189.395,395.482 188.900 C 395.578 188.405,395.578 187.595,395.482 187.100 C 395.387 186.605,395.309 187.010,395.309 188.000 M212.893 199.600 C 212.893 200.370,212.975 200.685,213.076 200.300 C 213.176 199.915,213.176 199.285,213.076 198.900 C 212.975 198.515,212.893 198.830,212.893 199.600 M220.400 235.325 C 220.400 235.394,220.985 235.979,221.700 236.625 L 223.000 237.800 221.825 236.500 C 220.730 235.288,220.400 235.016,220.400 235.325 " stroke="none" fill="#000000" fill-rule="evenodd"></path><path id="path1" d="M181.200 3.445 C 63.867 15.977,-14.208 119.293,6.066 235.200 C 22.137 327.086,104.553 395.595,199.024 395.600 C 299.224 395.604,383.028 320.714,394.182 221.200 C 394.540 218.010,395.005 213.858,395.216 211.973 C 396.277 202.503,395.256 181.346,393.133 168.800 C 380.940 96.746,335.358 40.620,268.400 15.212 C 242.022 5.202,207.882 0.595,181.200 3.445 M131.392 112.174 C 132.306 112.710,135.021 115.357,137.427 118.057 C 139.832 120.757,142.970 124.240,144.400 125.796 C 145.830 127.353,150.510 132.578,154.800 137.409 C 159.090 142.239,163.686 147.363,165.013 148.796 C 166.341 150.228,168.681 152.831,170.213 154.581 C 171.746 156.331,174.260 159.127,175.800 160.795 C 177.340 162.462,181.390 166.971,184.799 170.814 C 195.071 182.389,196.242 183.527,198.180 183.818 C 202.355 184.444,200.004 186.529,238.800 147.787 C 263.598 123.024,274.645 112.251,275.687 111.818 C 282.351 109.049,289.306 115.749,286.583 122.313 C 286.150 123.356,275.288 134.493,250.217 159.600 C 224.066 185.788,214.298 195.816,213.834 196.949 C 212.489 200.235,213.328 202.718,217.236 207.025 C 218.646 208.578,223.400 213.880,227.800 218.806 C 232.200 223.732,238.500 230.744,241.800 234.388 C 247.715 240.920,253.712 247.611,258.800 253.357 C 260.230 254.972,264.974 260.265,269.343 265.119 C 278.753 275.575,278.375 275.071,278.669 277.557 C 279.148 281.594,277.380 284.823,273.800 286.454 C 269.417 288.450,266.942 287.098,259.400 278.589 C 255.611 274.314,233.014 249.140,224.400 239.597 C 222.090 237.038,217.320 231.726,213.800 227.792 C 201.136 213.638,202.053 214.450,198.680 214.418 C 195.503 214.388,195.410 214.474,159.515 250.341 C 124.080 285.750,122.507 287.204,119.654 287.198 C 113.525 287.185,109.268 280.719,111.887 275.400 C 112.212 274.740,128.553 258.090,148.199 238.400 C 167.846 218.710,184.208 202.024,184.560 201.320 C 186.433 197.573,185.787 196.521,172.572 181.800 C 166.251 174.760,156.742 164.173,151.440 158.273 C 146.138 152.373,140.720 146.329,139.400 144.843 C 138.080 143.357,133.176 137.852,128.502 132.609 C 118.651 121.561,118.030 120.366,119.958 116.200 C 122.024 111.737,127.410 109.841,131.392 112.174 " stroke="none" fill="#ffffff" fill-rule="evenodd"></path></g></svg>';
+closeCanvasBtn_min.href = 'javascript:closeCanvas("all");';
 
 // Создание крестика, что бы закрыть
 var closeCanvasBtn = document.createElement("a");
-closeCanvasBtn.style = 'position: fixed; right: 28px; top: 18px; width: 8%; text-align: center; text-decoration: none;';
+closeCanvasBtn.style = 'position: absolute; right: 28px; top: 18px; width: 8%; text-align: center; text-decoration: none;';
 closeCanvasBtn.innerHTML = '<svg id="svg" version="1.1" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ><g id="svgg"><path id="path0" d="M395.309 188.000 C 395.309 188.990,395.387 189.395,395.482 188.900 C 395.578 188.405,395.578 187.595,395.482 187.100 C 395.387 186.605,395.309 187.010,395.309 188.000 M212.893 199.600 C 212.893 200.370,212.975 200.685,213.076 200.300 C 213.176 199.915,213.176 199.285,213.076 198.900 C 212.975 198.515,212.893 198.830,212.893 199.600 M220.400 235.325 C 220.400 235.394,220.985 235.979,221.700 236.625 L 223.000 237.800 221.825 236.500 C 220.730 235.288,220.400 235.016,220.400 235.325 " stroke="none" fill="#000000" fill-rule="evenodd"></path><path id="path1" d="M181.200 3.445 C 63.867 15.977,-14.208 119.293,6.066 235.200 C 22.137 327.086,104.553 395.595,199.024 395.600 C 299.224 395.604,383.028 320.714,394.182 221.200 C 394.540 218.010,395.005 213.858,395.216 211.973 C 396.277 202.503,395.256 181.346,393.133 168.800 C 380.940 96.746,335.358 40.620,268.400 15.212 C 242.022 5.202,207.882 0.595,181.200 3.445 M131.392 112.174 C 132.306 112.710,135.021 115.357,137.427 118.057 C 139.832 120.757,142.970 124.240,144.400 125.796 C 145.830 127.353,150.510 132.578,154.800 137.409 C 159.090 142.239,163.686 147.363,165.013 148.796 C 166.341 150.228,168.681 152.831,170.213 154.581 C 171.746 156.331,174.260 159.127,175.800 160.795 C 177.340 162.462,181.390 166.971,184.799 170.814 C 195.071 182.389,196.242 183.527,198.180 183.818 C 202.355 184.444,200.004 186.529,238.800 147.787 C 263.598 123.024,274.645 112.251,275.687 111.818 C 282.351 109.049,289.306 115.749,286.583 122.313 C 286.150 123.356,275.288 134.493,250.217 159.600 C 224.066 185.788,214.298 195.816,213.834 196.949 C 212.489 200.235,213.328 202.718,217.236 207.025 C 218.646 208.578,223.400 213.880,227.800 218.806 C 232.200 223.732,238.500 230.744,241.800 234.388 C 247.715 240.920,253.712 247.611,258.800 253.357 C 260.230 254.972,264.974 260.265,269.343 265.119 C 278.753 275.575,278.375 275.071,278.669 277.557 C 279.148 281.594,277.380 284.823,273.800 286.454 C 269.417 288.450,266.942 287.098,259.400 278.589 C 255.611 274.314,233.014 249.140,224.400 239.597 C 222.090 237.038,217.320 231.726,213.800 227.792 C 201.136 213.638,202.053 214.450,198.680 214.418 C 195.503 214.388,195.410 214.474,159.515 250.341 C 124.080 285.750,122.507 287.204,119.654 287.198 C 113.525 287.185,109.268 280.719,111.887 275.400 C 112.212 274.740,128.553 258.090,148.199 238.400 C 167.846 218.710,184.208 202.024,184.560 201.320 C 186.433 197.573,185.787 196.521,172.572 181.800 C 166.251 174.760,156.742 164.173,151.440 158.273 C 146.138 152.373,140.720 146.329,139.400 144.843 C 138.080 143.357,133.176 137.852,128.502 132.609 C 118.651 121.561,118.030 120.366,119.958 116.200 C 122.024 111.737,127.410 109.841,131.392 112.174 " stroke="none" fill="#ffffff" fill-rule="evenodd"></path></g></svg>';
 closeCanvasBtn.href = 'javascript:closeCanvas();';
 
@@ -130,7 +162,7 @@ const canvas = document.createElement("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 canvas.id = "swipeCanvas-23e9i2ed";
-canvas.style = "background-image: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 45%, rgba(255,255,255,0) 55%), url({{ code.get_absolute_image }}); background-position: center; background-size: cover; width:100%; height:100%;";
+canvas.style = "background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.67) 0%, rgba(0, 0, 0, 0) 17%, rgba(255, 255, 255, 0) 10%), linear-gradient(rgba(0, 0, 0, 0.67) 0%, rgba(0, 0, 0, 0) 17%, rgba(255, 255, 255, 0) 10%), url({{ code.get_absolute_image }}); background-position: center; background-size: cover; width:100%; height:100%;";
 
 //Чувствительность — количество пикселей, после которого жест будет считаться свайпом
 const sensitivity = 40;
@@ -239,33 +271,42 @@ function goUrlBank(){
     div_body.appendChild(div_title);
     
     let div_url = [];
+    let span_zagibuli = [];
     let div_url_links = [];
+    let image_link = "";
     // {% for item in code.url_links.all %}
 
     // {% if item.status %}
     div_url.push(document.createElement("div"));
-    div_url[div_url.length - 1].style = "position: relative; min-height: 137px; text-shadow: 3px 3px 7px rgb(0 0 0); background-size: cover; background-position: center center; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; text-align: left; color:white; font-size:18px; font-weight: 600; padding:15px";
+    div_url[div_url.length - 1].style = "position: relative; min-height: 187px; background-size: cover; background-position: center center; box-shadow: 0 0 10px rgba(0,0,0,0.5); padding: 10px; text-align: left; color:white; font-size:18px; padding:15px";
     // {% if item.type == 0 %}
     div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/wa.jpg' %}')";
+    image_link = "url('{% static 'images/widget-bg/wa.jpg' %}')";
     // {% elif item.type == 1 %}
     div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/tg.jpg' %}')";
+    image_link = "url('{% static 'images/widget-bg/tg.jpg' %}')";
     // {% elif item.type == 2 %}
     div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/inst.jpg' %}')";
+    image_link = "url('{% static 'images/widget-bg/inst.jpg' %}')";
     // {% elif item.type == 3 %}
     div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/vk.jpg' %}')";
+    image_link = "url('{% static 'images/widget-bg/vk.jpg' %}')";
     // {% elif item.type == 4 %}
     div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/fb.jpg' %}')";
+    image_link = "url('{% static 'images/widget-bg/fb.jpg' %}')";
     // {% else %}
     div_url[div_url.length - 1].style.backgroundColor = "#cd486b";
-    div_url[div_url.length - 1].style.backgroundImage = "url('{% static 'images/widget-bg/phone.jpg' %}')";
+    image_link = "url('{% static 'images/widget-bg/phone.jpg' %}')";
     // {% endif %}
 
+    div_url[div_url.length - 1].style.backgroundImage = "linear-gradient(0deg, rgba(0, 0, 0, 0.47) 0%, rgba(0, 0, 0, 0) 40%, rgba(255, 255, 255, 0) 1%), linear-gradient(rgba(0, 0, 0, 0.67) 0%, rgba(0, 0, 0, 0) 33%, rgba(255, 255, 255, 0) 28%)," + image_link;
     div_url[div_url.length - 1].innerHTML = "{{ item.keyWords }}";
+  
+    span_zagibuli.push(document.createElement("span"));
+    span_zagibuli[span_zagibuli.length - 1].innerHTML = "_____";
+    span_zagibuli[span_zagibuli.length - 1].style = 'font-size: 46px;display: block;margin-top: -48px;';
+    div_url[div_url.length - 1].appendChild(span_zagibuli[span_zagibuli.length - 1]);
+
     div_url_links.push(document.createElement("div"));
     div_url_links[div_url_links.length - 1].style = 'font-size: 18px; position: absolute; bottom: 15px; right: 22px;';
     div_url_links[div_url_links.length - 1].innerHTML = "<a href='{{ item.url }}' style='color: white;'>Перейти</a> <span>›</span>";

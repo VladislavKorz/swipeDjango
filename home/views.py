@@ -266,19 +266,26 @@ def StatusChangeWidget(request, pk):
 
 def widgetEditView(request, pk):
     widget = get_object_or_404(testLead, pk=pk, user=request.user)
-    logger.info(request)
     if request.method == 'POST':
         logger.info(request.POST)
         form = WidgetChangeForm(request.POST, request.FILES, instance=widget)
+        form_link = LinkChangeForm(request.POST)
         if form.is_valid():
             logger.info(request.POST)
             form.save()
+        if form_link.is_valid():
+            logger.info(request.POST)
+            link = form_link.save()
+            link.lead = widget
+            link.save()
     else:
+        form_link = LinkChangeForm(request.POST or None)
         form = WidgetChangeForm(request.POST or None, instance=widget)
 
     context = {
         'title': 'Редактор виджета #' + str(pk),
         'form': form,
+        'form_link': form_link,
         'widget': widget
     } 
     return render(request, 'home/widget_edit.html', context)
