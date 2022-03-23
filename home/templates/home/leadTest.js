@@ -267,7 +267,7 @@ function goUrlBank(){
 
     let div_title = document.createElement("div");
     div_title.style = "padding-bottom: 18px;";
-    div_title.innerHTML = "<img src='http://127.0.0.1:8000/static/home/image/logo.png' style='width: 45%; padding: 12px;'><br>Получи промокод в любом из мессенджеров👇";
+    div_title.innerHTML = "<img src='{% static 'home/image/logo.png' %}' style='width: 45%; padding: 12px;'><br>Получи промокод в любом из мессенджеров👇";
     div_body.appendChild(div_title);
     
     let div_url = [];
